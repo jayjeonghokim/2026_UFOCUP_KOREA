@@ -260,6 +260,18 @@
       box-shadow: none; transform: none;
       background: var(--surface2); color: var(--text-dim);
     }
+    /* Undo 상태 (진출 완료 후 되돌리기) */
+    .promote-btn.undo-mode {
+      background: linear-gradient(135deg, #1e3a5f, #1d4ed8, #3b82f6);
+      color: #e0f2fe; opacity: 1; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(59,130,246,0.35);
+    }
+    .promote-btn.undo-mode:hover {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6, #60a5fa);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(96,165,250,0.55);
+      transform: translateY(-1px);
+    }
 
     /* ── Player States ── */
     .player-row.rank-1st {
@@ -694,18 +706,23 @@ function updatePromoteBtn(stage, gi) {
   const btn    = document.getElementById(`${prefix}-promote-${gi}`);
   if (!btn) return;
   const grp    = stage === 'qualifier' ? state.qualifier[gi] : state.semi[gi];
-  const already = grp.players.some(p => p.advanced);
+  const advPlayer = grp.players.find(p => p.advanced);
   // 수저 최다자 찾기
   const maxSpoons = Math.max(...grp.players.map(p => p.spoons));
   const leader    = grp.players.find(p => p.spoons === maxSpoons && p.spoons > 0);
-  if (already) {
-    btn.disabled = true;
-    btn.textContent = '✔ 진출 완료';
+
+  if (advPlayer) {
+    // 진출 완료 → Undo 가능 상태
+    btn.disabled = false;
+    btn.className = 'promote-btn undo-mode';
+    btn.textContent = `↩ 진출 취소 (${advPlayer.name})`;
   } else if (leader) {
     btn.disabled = false;
+    btn.className = 'promote-btn';
     btn.textContent = `🥄 진출 → ${leader.name}`;
   } else {
     btn.disabled = true;
+    btn.className = 'promote-btn';
     btn.textContent = '🥄 진출';
   }
 }
@@ -912,7 +929,13 @@ function refreshRow(stage, gi, pi) {
 ══════════════════════════════════════════ */
 function promotePlayer(stage, gi) {
   const grp = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
-  if (grp.players.some(p => p.advanced)) { showToast('이미 진출자가 있습니다.'); return; }
+
+  // ── UNDO: 이미 진출자가 있으면 취소 처리 ──
+  const advIdx = grp.players.findIndex(p => p.advanced);
+  if (advIdx !== -1) {
+    undoPromote(stage, gi, advIdx);
+    return;
+  }
 
   // 수저 가장 많은 선수 찾기
   const maxSpoons = Math.max(...grp.players.map(p => p.spoons));
@@ -935,15 +958,13 @@ function promotePlayer(stage, gi) {
     grp.done = true;
     state.finalists[slot] = { name: playerName, from: `예선 ${gi+1}조 1위` };
 
-    // UI 갱신: 예선 카드만 부분 갱신 (전체 재렌더 대신)
+    // UI 갱신: 예선 카드만 부분 갱신
     grp.players.forEach((p, rowPi) => refreshRow('qualifier', gi, rowPi));
     sortBySpoons('qualifier', gi);
     updatePromoteBtn('qualifier', gi);
-    // 조 상태 뱃지 갱신
     const statusEl = document.getElementById(`q-status-${gi}`);
     if (statusEl) { statusEl.textContent = '✔ 완료'; statusEl.className = 'group-status done'; }
 
-    // 본선 진출자 패널 갱신
     renderFinalists();
     saveState();
     showToast(`🎉 ${playerName} → 본선 진출! (수저 ${maxSpoons}개)`);
@@ -963,14 +984,64 @@ function promotePlayer(stage, gi) {
     grp.players.forEach((p, rowPi) => refreshRow('semi', gi, rowPi));
     sortBySpoons('semi', gi);
     updatePromoteBtn('semi', gi);
-    // 조 상태 뱃지 갱신
     const statusEl = document.getElementById(`s-status-${gi}`);
     if (statusEl) { statusEl.textContent = '✔ 완료'; statusEl.className = 'group-status done'; }
 
-    // 결선 패널 갱신
     renderFinal();
     saveState();
     showToast(`🏆 ${playerName} → 최종 결선 진출! (수저 ${maxSpoons}개)`);
+  }
+}
+
+/* ══════════════════════════════════════════
+   UNDO PROMOTE — 진출 취소
+══════════════════════════════════════════ */
+function undoPromote(stage, gi, advIdx) {
+  const grp = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
+  const advPlayer = grp.players[advIdx];
+  const advName   = (advPlayer.name || '').trim();
+
+  if (stage === 'qualifier') {
+    // 본선 진출자 명단에서 제거
+    const fSlot = state.finalists.findIndex(f => (f.name || '').trim() === advName);
+    if (fSlot !== -1) state.finalists[fSlot] = { name: '', from: '' };
+
+    // 선수 상태 초기화
+    advPlayer.advanced = false;
+    grp.players.forEach(p => { p.eliminated = false; });
+    grp.done = false;
+
+    // UI 갱신
+    grp.players.forEach((p, rowPi) => refreshRow('qualifier', gi, rowPi));
+    sortBySpoons('qualifier', gi);
+    updatePromoteBtn('qualifier', gi);
+    const statusEl = document.getElementById(`q-status-${gi}`);
+    if (statusEl) { statusEl.textContent = '진행중'; statusEl.className = 'group-status'; }
+
+    renderFinalists();
+    saveState();
+    showToast(`↩ ${advName} 진출 취소 — 예선 ${gi+1}조 재진행`);
+
+  } else {
+    // 결선 명단에서 제거
+    const fSlot = state.final.findIndex(p => (p.name || '').trim() === advName);
+    if (fSlot !== -1) state.final[fSlot] = { name: '', spoons: 0, champion: false, from: '' };
+
+    // 선수 상태 초기화
+    advPlayer.advanced = false;
+    grp.players.forEach(p => { p.eliminated = false; });
+    grp.done = false;
+
+    // UI 갱신
+    grp.players.forEach((p, rowPi) => refreshRow('semi', gi, rowPi));
+    sortBySpoons('semi', gi);
+    updatePromoteBtn('semi', gi);
+    const statusEl = document.getElementById(`s-status-${gi}`);
+    if (statusEl) { statusEl.textContent = '진행중'; statusEl.className = 'group-status'; }
+
+    renderFinal();
+    saveState();
+    showToast(`↩ ${advName} 결선 진출 취소 — 본선 ${gi+1}조 재진행`);
   }
 }
 
