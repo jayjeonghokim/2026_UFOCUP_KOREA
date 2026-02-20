@@ -140,6 +140,70 @@
     /* 잠금 대상 래퍼 */
     .lockable-section { position:relative; }
 
+    /* ── 비밀번호 모달 ── */
+    .pw-modal-backdrop {
+      display:none; position:fixed; inset:0; z-index:2000;
+      background:rgba(0,0,0,0.65); backdrop-filter:blur(4px);
+      align-items:center; justify-content:center;
+    }
+    .pw-modal-backdrop.open { display:flex; }
+    .pw-modal {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:16px; padding:28px 24px 22px;
+      width:min(340px, 90vw); box-shadow:0 8px 40px rgba(0,0,0,0.6);
+      display:flex; flex-direction:column; gap:14px;
+      animation:modal-in 0.18s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes modal-in {
+      from { transform:scale(0.85) translateY(10px); opacity:0; }
+      to   { transform:scale(1)    translateY(0);    opacity:1; }
+    }
+    .pw-modal-title {
+      font-size:0.9rem; font-weight:800; letter-spacing:2px;
+      color:var(--accent); text-align:center;
+    }
+    .pw-modal-desc {
+      font-size:0.72rem; color:var(--text-dim);
+      text-align:center; letter-spacing:1px; line-height:1.5;
+    }
+    .pw-input-wrap { position:relative; display:flex; align-items:center; }
+    .pw-input {
+      width:100%; padding:10px 42px 10px 14px;
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:10px; color:var(--text); font-size:0.95rem;
+      outline:none; transition:border-color 0.2s; letter-spacing:3px;
+    }
+    .pw-input:focus { border-color:var(--accent); }
+    .pw-input.error { border-color:var(--red); animation:shake 0.3s ease; }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)}
+      60%{transform:translateX(6px)}   80%{transform:translateX(-3px)}
+    }
+    .pw-eye-btn {
+      position:absolute; right:10px; background:none; border:none;
+      cursor:pointer; font-size:1.05rem; color:var(--text-dim);
+      padding:2px; line-height:1; transition:color 0.2s;
+    }
+    .pw-eye-btn:hover { color:var(--text); }
+    .pw-error-msg {
+      font-size:0.7rem; color:var(--red); text-align:center;
+      min-height:1em; letter-spacing:1px;
+    }
+    .pw-modal-btns { display:flex; gap:8px; }
+    .pw-btn {
+      flex:1; padding:9px; border-radius:9px; border:none;
+      font-size:0.8rem; font-weight:800; cursor:pointer;
+      letter-spacing:1px; transition:all 0.2s;
+    }
+    .pw-btn-confirm {
+      background:linear-gradient(135deg,var(--accent2),#4c1d95); color:#fff;
+    }
+    .pw-btn-confirm:hover { filter:brightness(1.15); }
+    .pw-btn-cancel {
+      background:var(--surface2); color:var(--text-dim); border:1px solid var(--border);
+    }
+    .pw-btn-cancel:hover { color:var(--text); border-color:var(--text-dim); }
+
     /* ── Qualifier / Semi Grid ── */
     .qualifier-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
     .semi-grid      { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
@@ -540,6 +604,26 @@
 </header>
 
 <div id="toast" class="toast"></div>
+
+<!-- 비밀번호 모달 -->
+<div class="pw-modal-backdrop" id="pw-modal-backdrop">
+  <div class="pw-modal" role="dialog" aria-modal="true">
+    <div class="pw-modal-title" id="pw-modal-title">🔒 잠금 해제</div>
+    <div class="pw-modal-desc" id="pw-modal-desc">비밀번호를 입력하세요</div>
+    <div class="pw-input-wrap">
+      <input class="pw-input" type="password" id="pw-input"
+             placeholder="••••••••••" autocomplete="off"
+             onkeydown="if(event.key==='Enter')pwConfirm()">
+      <button class="pw-eye-btn" id="pw-eye" title="비밀번호 표시/숨김"
+              onclick="pwToggleEye()">👁</button>
+    </div>
+    <div class="pw-error-msg" id="pw-error-msg"></div>
+    <div class="pw-modal-btns">
+      <button class="pw-btn pw-btn-cancel"  onclick="pwCancel()">취소</button>
+      <button class="pw-btn pw-btn-confirm" onclick="pwConfirm()">확인</button>
+    </div>
+  </div>
+</div>
 
 <div class="main-layout">
 
@@ -1373,47 +1457,45 @@ function loadState(){
 const LOCK_PW   = 'JAYUFOJAY2';
 const lockState = { qualifier: false, semi: false, final: false };
 
-function toggleSectionLock(section) {
-  if (lockState[section]) {
-    // 잠금 해제: 비밀번호 확인
-    const pw = prompt('🔒 잠금 해제 비밀번호를 입력하세요:');
-    if (pw === null) return;                         // 취소
-    if (pw !== LOCK_PW) {
-      showToast('❌ 비밀번호가 틀렸습니다.');
-      return;
-    }
-    lockState[section] = false;
-    applySectionLock(section);
-    showToast('🔓 잠금이 해제되었습니다.');
-  } else {
-    // 잠금 설정: 확인만
-    if (!confirm(`'${sectionLabel(section)}' 섹션을 잠그시겠습니까?\n해제 시 비밀번호가 필요합니다.`)) return;
-    lockState[section] = true;
-    applySectionLock(section);
-    showToast('🔒 섹션이 잠금되었습니다.');
-  }
+function sectionLabel(section) {
+  return { qualifier:'예선 라운드', semi:'본선 라운드', final:'최종 결선' }[section] || section;
 }
 
 function applySectionLock(section) {
-  const overlay = document.getElementById(`overlay-${section}`);
-  const lockBtn = document.getElementById(`lock-${section}`);
-  const resetBtn = document.getElementById(`reset-${section}`); // qualifier만 있음
-
+  const overlay  = document.getElementById(`overlay-${section}`);
+  const lockBtn  = document.getElementById(`lock-${section}`);
+  const resetBtn = document.getElementById(`reset-${section}`);
   if (lockState[section]) {
-    overlay && overlay.classList.add('active');
-    lockBtn  && (lockBtn.textContent = '🔒');
-    lockBtn  && lockBtn.classList.add('locked');
+    overlay  && overlay.classList.add('active');
+    lockBtn  && (lockBtn.textContent = '🔒', lockBtn.classList.add('locked'));
     resetBtn && (resetBtn.disabled = true);
   } else {
-    overlay && overlay.classList.remove('active');
-    lockBtn  && (lockBtn.textContent = '🔓');
-    lockBtn  && lockBtn.classList.remove('locked');
+    overlay  && overlay.classList.remove('active');
+    lockBtn  && (lockBtn.textContent = '🔓', lockBtn.classList.remove('locked'));
     resetBtn && (resetBtn.disabled = false);
   }
 }
 
-function sectionLabel(section) {
-  return { qualifier:'예선 라운드', semi:'본선 라운드', final:'최종 결선' }[section] || section;
+function toggleSectionLock(section) {
+  if (!lockState[section]) {
+    // 잠금: 바로 실행 (비번 불필요)
+    lockState[section] = true;
+    applySectionLock(section);
+    showToast(`🔒 ${sectionLabel(section)} 잠금 완료`);
+  } else {
+    // 해제: 비밀번호 확인 모달
+    pwModal({
+      title: '🔒 잠금 해제',
+      desc:  `${sectionLabel(section)} 잠금 해제 비밀번호를 입력하세요`,
+      onConfirm(pw) {
+        if (pw !== LOCK_PW) return '❌ 비밀번호가 틀렸습니다.';
+        lockState[section] = false;
+        applySectionLock(section);
+        showToast('🔓 잠금이 해제되었습니다.');
+        return null; // 성공
+      }
+    });
+  }
 }
 
 /* ── 예선 새로고침(초기화) ── */
@@ -1421,14 +1503,19 @@ function resetSection(section) {
   if (lockState[section]) { showToast('🔒 잠금 해제 후 초기화하세요.'); return; }
   if (section !== 'qualifier') return;
 
-  if (!confirm('⚠️ 예선 전체를 초기화하면\n본선·결선 데이터도 모두 삭제됩니다.\n계속하시겠습니까?')) return;
+  // 1단계: 초기화 의사 확인 모달
+  pwModal({
+    title: '🔄 전체 초기화',
+    desc:  '⚠️ 예선·본선·결선 데이터가 모두 삭제됩니다.\n비밀번호를 입력하면 초기화됩니다.',
+    onConfirm(pw) {
+      if (pw !== LOCK_PW) return '❌ 비밀번호가 틀렸습니다.';
+      doResetAll();
+      return null;
+    }
+  });
+}
 
-  // 비밀번호 확인
-  const pw = prompt('초기화 확인: 비밀번호를 입력하세요.');
-  if (pw === null) return;
-  if (pw !== LOCK_PW) { showToast('❌ 비밀번호가 틀렸습니다.'); return; }
-
-  // 전체 state 초기화
+function doResetAll() {
   state.qualifier.forEach(g => {
     g.done = false;
     g.players.forEach(p => { p.spoons=0; p.advanced=false; p.eliminated=false; p.editing=false; });
@@ -1439,21 +1526,73 @@ function resetSection(section) {
     g.done = false;
     g.players.forEach(p => { p.name=''; p.spoons=0; p.advanced=false; p.eliminated=false; p.from=''; p.editing=false; });
   });
-  state.final   = Array.from({length:3}, ()=>({ name:'', spoons:0, champion:false, from:'' }));
+  state.final    = Array.from({length:3}, ()=>({ name:'', spoons:0, champion:false, from:'' }));
   state.champion = null;
-
-  // 잠금 해제
   ['qualifier','semi','final'].forEach(s => { lockState[s]=false; applySectionLock(s); });
-
-  renderQualifier();
-  renderFinalists();
-  renderSemi();
-  renderFinal();
+  renderQualifier(); renderFinalists(); renderSemi(); renderFinal();
   for(let gi=0;gi<QUAL_GROUPS;gi++) sortBySpoons('qualifier',gi);
   document.getElementById('winner-banner').classList.remove('show');
   saveState();
   showToast('🔄 전체 초기화 완료!');
 }
+
+/* ══════════════════════════════════════════
+   PASSWORD MODAL (커스텀 — 평문 노출 없음)
+══════════════════════════════════════════ */
+let _pwCallback = null;
+
+function pwModal({ title, desc, onConfirm }) {
+  _pwCallback = onConfirm;
+  document.getElementById('pw-modal-title').textContent = title;
+  document.getElementById('pw-modal-desc').textContent  = desc;
+  const inp = document.getElementById('pw-input');
+  inp.value = '';
+  inp.type  = 'password';
+  document.getElementById('pw-eye').textContent = '👁';
+  document.getElementById('pw-error-msg').textContent = '';
+  document.getElementById('pw-modal-backdrop').classList.add('open');
+  setTimeout(() => inp.focus(), 80);
+}
+
+function pwConfirm() {
+  const pw  = document.getElementById('pw-input').value;
+  const err = _pwCallback ? _pwCallback(pw) : null;
+  if (err) {
+    // 오류: 흔들기 + 에러 메시지
+    const inp = document.getElementById('pw-input');
+    inp.classList.remove('error');
+    void inp.offsetWidth; // reflow
+    inp.classList.add('error');
+    document.getElementById('pw-error-msg').textContent = err;
+    inp.value = '';
+    inp.focus();
+  } else {
+    pwClose();
+  }
+}
+
+function pwCancel() { pwClose(); }
+
+function pwClose() {
+  document.getElementById('pw-modal-backdrop').classList.remove('open');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error-msg').textContent = '';
+  _pwCallback = null;
+}
+
+function pwToggleEye() {
+  const inp = document.getElementById('pw-input');
+  const eye = document.getElementById('pw-eye');
+  if (inp.type === 'password') { inp.type = 'text';     eye.textContent = '🙈'; }
+  else                         { inp.type = 'password'; eye.textContent = '👁'; }
+  inp.focus();
+}
+
+// 백드롭 클릭으로 닫기
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pw-modal-backdrop')
+    .addEventListener('click', e => { if (e.target.id === 'pw-modal-backdrop') pwCancel(); });
+});
 
 /* ══════════════════════════════════════════
    INIT
