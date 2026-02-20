@@ -14,8 +14,6 @@
       --accent: #00d4ff;
       --accent2: #7c3aed;
       --gold: #fbbf24;
-      --silver: #94a3b8;
-      --bronze: #b45309;
       --green: #10b981;
       --red: #ef4444;
       --text: #e2e8f0;
@@ -23,6 +21,7 @@
       --border: #1e2a5e;
       --glow: 0 0 20px rgba(0,212,255,0.3);
       --glow-gold: 0 0 25px rgba(251,191,36,0.5);
+      --bronze: #b45309;
     }
 
     body {
@@ -35,8 +34,7 @@
 
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background-image:
         radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
         radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
@@ -46,280 +44,293 @@
         radial-gradient(1px 1px at 90% 30%, rgba(255,255,255,0.3) 0%, transparent 100%),
         radial-gradient(1px 1px at 20% 90%, rgba(255,255,255,0.4) 0%, transparent 100%),
         radial-gradient(1px 1px at 70% 50%, rgba(255,255,255,0.2) 0%, transparent 100%);
-      pointer-events: none;
-      z-index: 0;
+      pointer-events: none; z-index: 0;
     }
 
     /* ── Header ── */
-    header {
-      text-align: center;
-      padding: 32px 20px 20px;
-      position: relative;
-      z-index: 2;
-    }
-    .ufo-icon {
-      font-size: 3rem;
-      display: inline-block;
-      animation: float 3s ease-in-out infinite;
-      filter: drop-shadow(0 0 12px var(--accent));
-    }
-    @keyframes float {
-      0%,100% { transform: translateY(0px); }
-      50%      { transform: translateY(-10px); }
-    }
+    header { text-align:center; padding:28px 20px 16px; position:relative; z-index:2; }
+    .ufo-icon { font-size:2.8rem; display:inline-block; animation:float 3s ease-in-out infinite; filter:drop-shadow(0 0 12px var(--accent)); }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
     header h1 {
-      font-size: clamp(1.6rem, 4vw, 2.8rem);
-      font-weight: 900;
-      letter-spacing: 4px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin: 8px 0 4px;
+      font-size:clamp(1.4rem,3.5vw,2.6rem); font-weight:900; letter-spacing:4px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2),var(--gold));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      margin:6px 0 3px;
     }
-    header p { color: var(--text-dim); font-size: 0.9rem; letter-spacing: 2px; }
+    header p { color:var(--text-dim); font-size:0.85rem; letter-spacing:2px; }
 
-    /* ── Layout ── */
+    /* ── Main Layout ── */
     .main-layout {
-      display: grid;
-      grid-template-columns: 220px 1fr 220px;
-      gap: 16px;
-      padding: 0 16px 40px;
-      position: relative;
-      z-index: 2;
-      align-items: start;
+      display:grid; grid-template-columns:210px 1fr 210px;
+      gap:14px; padding:0 14px 40px; position:relative; z-index:2; align-items:start;
     }
 
     /* ── Timer Panel ── */
     .timer-panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px 16px;
-      position: sticky;
-      top: 20px;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:16px; padding:18px 14px; position:sticky; top:16px;
     }
-    .timer-panel.left  { border-color: rgba(0,212,255,0.3); }
-    .timer-panel.right { border-color: rgba(251,191,36,0.4); }
-
-    .timer-label {
-      font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
-      text-align: center; margin-bottom: 12px; font-weight: 700;
-    }
-    .timer-panel.left  .timer-label { color: var(--accent); }
-    .timer-panel.right .timer-label { color: var(--gold); }
-
-    .timer-name { font-size: 1rem; font-weight: 800; text-align: center; margin-bottom: 16px; }
-
+    .timer-panel.left  { border-color:rgba(0,212,255,0.3); }
+    .timer-panel.right { border-color:rgba(251,191,36,0.4); }
+    .timer-label { font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; text-align:center; margin-bottom:10px; font-weight:700; }
+    .timer-panel.left  .timer-label { color:var(--accent); }
+    .timer-panel.right .timer-label { color:var(--gold); }
+    .timer-name { font-size:0.95rem; font-weight:800; text-align:center; margin-bottom:14px; }
     .timer-display {
-      font-size: 2.6rem; font-weight: 900; text-align: center;
-      font-variant-numeric: tabular-nums; letter-spacing: 2px;
-      margin-bottom: 16px; transition: color 0.3s;
+      font-size:2.4rem; font-weight:900; text-align:center;
+      font-variant-numeric:tabular-nums; letter-spacing:2px; margin-bottom:14px; transition:color 0.3s;
     }
-    .timer-panel.left  .timer-display { color: var(--accent); text-shadow: var(--glow); }
-    .timer-panel.right .timer-display { color: var(--gold);   text-shadow: var(--glow-gold); }
-    .timer-display.warning { color: var(--red) !important; animation: pulse-red 0.5s ease infinite alternate; }
-    @keyframes pulse-red { from { opacity:1; } to { opacity:0.5; } }
-
-    .timer-progress { width:100%; height:6px; background:var(--surface2); border-radius:3px; margin-bottom:16px; overflow:hidden; }
-    .timer-progress-bar { height:100%; border-radius:3px; transition: width 1s linear; }
-    .timer-panel.left  .timer-progress-bar { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
-    .timer-panel.right .timer-progress-bar { background: linear-gradient(90deg, var(--bronze), var(--gold)); }
-
-    .timer-btn {
-      display:block; width:100%; padding:9px 12px; border:none; border-radius:8px;
-      font-size:0.82rem; font-weight:700; cursor:pointer; margin-bottom:8px;
-      transition:all 0.2s; letter-spacing:0.5px;
-    }
-    .btn-start { background: linear-gradient(135deg, var(--accent2), #4c1d95); color:white; }
+    .timer-panel.left  .timer-display { color:var(--accent); text-shadow:var(--glow); }
+    .timer-panel.right .timer-display { color:var(--gold); text-shadow:var(--glow-gold); }
+    .timer-display.warning { color:var(--red)!important; animation:pulse-red 0.5s ease infinite alternate; }
+    @keyframes pulse-red { from{opacity:1} to{opacity:0.45} }
+    .timer-progress { width:100%; height:5px; background:var(--surface2); border-radius:3px; margin-bottom:14px; overflow:hidden; }
+    .timer-progress-bar { height:100%; border-radius:3px; transition:width 1s linear; }
+    .timer-panel.left  .timer-progress-bar { background:linear-gradient(90deg,var(--accent2),var(--accent)); }
+    .timer-panel.right .timer-progress-bar { background:linear-gradient(90deg,var(--bronze),var(--gold)); }
+    .timer-btn { display:block; width:100%; padding:8px 10px; border:none; border-radius:8px; font-size:0.8rem; font-weight:700; cursor:pointer; margin-bottom:7px; transition:all 0.2s; }
+    .btn-start { background:linear-gradient(135deg,var(--accent2),#4c1d95); color:white; }
     .btn-start:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(124,58,237,0.4); }
     .btn-toggle { background:var(--surface2); color:var(--text-dim); border:1px solid var(--border); }
     .btn-toggle:hover { background:var(--border); color:var(--text); }
     .btn-toggle.active { background:linear-gradient(135deg,#065f46,#047857); color:#6ee7b7; border-color:var(--green); }
-    .btn-reset { background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:0.75rem; }
+    .btn-reset { background:transparent; color:var(--text-dim); border:1px solid var(--border); font-size:0.72rem; }
     .btn-reset:hover { color:var(--red); border-color:var(--red); }
 
-    /* ── Tournament ── */
-    .tournament-container { min-width: 0; }
-
-    .section-header { display:flex; align-items:center; gap:12px; margin:24px 0 14px; }
-    .section-header h2 { font-size:1rem; font-weight:800; letter-spacing:3px; text-transform:uppercase; white-space:nowrap; }
-    .section-line { flex:1; height:1px; background:linear-gradient(90deg, var(--border), transparent); }
-    .badge { font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:1px; }
+    /* ── Tournament Container ── */
+    .tournament-container { min-width:0; }
+    .section-header { display:flex; align-items:center; gap:10px; margin:20px 0 12px; }
+    .section-header h2 { font-size:0.95rem; font-weight:800; letter-spacing:3px; text-transform:uppercase; white-space:nowrap; }
+    .section-line { flex:1; height:1px; background:linear-gradient(90deg,var(--border),transparent); }
+    .badge { font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:20px; letter-spacing:1px; }
     .badge-qualifier { background:rgba(0,212,255,0.15); color:var(--accent); border:1px solid rgba(0,212,255,0.3); }
     .badge-semi      { background:rgba(124,58,237,0.2); color:#a78bfa;       border:1px solid rgba(124,58,237,0.4); }
     .badge-final     { background:rgba(251,191,36,0.15); color:var(--gold);   border:1px solid rgba(251,191,36,0.4); }
 
     /* ── Qualifier Grid ── */
-    .qualifier-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .qualifier-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
 
     /* ── Group Card ── */
     .group-card {
       background:var(--surface); border:1px solid var(--border);
-      border-radius:14px; overflow:hidden; transition:border-color 0.3s,box-shadow 0.3s;
+      border-radius:14px; overflow:hidden; transition:border-color 0.3s;
     }
     .group-card:hover { border-color:rgba(0,212,255,0.2); }
-
-    .group-header {
-      background:var(--surface2); padding:10px 14px;
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .group-title { font-size:0.8rem; font-weight:800; letter-spacing:2px; color:var(--accent); }
+    .group-header { background:var(--surface2); padding:9px 12px; display:flex; align-items:center; justify-content:space-between; }
+    .group-title { font-size:0.78rem; font-weight:800; letter-spacing:2px; color:var(--accent); }
     .group-status {
-      font-size:0.65rem; padding:2px 8px; border-radius:10px; font-weight:700;
+      font-size:0.62rem; padding:2px 7px; border-radius:10px; font-weight:700;
       background:rgba(100,116,139,0.2); color:var(--text-dim);
       border:1px solid rgba(100,116,139,0.3); cursor:pointer; transition:all 0.2s;
     }
     .group-status.done { background:rgba(16,185,129,0.2); color:var(--green); border-color:rgba(16,185,129,0.4); }
-
-    .player-list { padding: 8px; }
+    .player-list { padding:7px; }
 
     /* ── Player Row ── */
     .player-row {
-      display:flex; align-items:center; gap:6px;
-      padding:7px 6px; border-radius:8px; margin-bottom:4px;
+      display:flex; align-items:center; gap:5px;
+      padding:6px 5px; border-radius:8px; margin-bottom:3px;
       transition:all 0.25s; border:1px solid transparent;
     }
     .player-row:last-child { margin-bottom:0; }
-
     .player-rank {
-      width:22px; height:22px; border-radius:50%; display:flex;
-      align-items:center; justify-content:center; font-size:0.7rem;
+      width:20px; height:20px; border-radius:50%; display:flex;
+      align-items:center; justify-content:center; font-size:0.65rem;
       font-weight:800; flex-shrink:0; background:var(--surface2); color:var(--text-dim);
     }
 
-    /* ── Name area: view / edit mode ── */
+    /* ── Name area ── */
     .name-area { flex:1; min-width:0; display:flex; align-items:center; gap:4px; }
-
     .player-name-display {
-      flex:1; font-size:0.88rem; font-weight:600; color:var(--text);
+      flex:1; font-size:0.84rem; font-weight:600; color:var(--text);
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .player-name-display.empty { color:var(--text-dim); font-weight:400; font-style:italic; }
-
+    .player-name-display.empty { color:var(--text-dim); font-style:italic; font-weight:400; }
     .player-name-input {
       flex:1; background:rgba(0,212,255,0.07); border:1px solid rgba(0,212,255,0.35);
-      border-radius:6px; padding:3px 7px; color:white; font-size:0.88rem;
-      font-weight:600; outline:none; min-width:0;
+      border-radius:6px; padding:2px 6px; color:white; font-size:0.84rem; font-weight:600; outline:none; min-width:0;
     }
-    .player-name-input:focus { border-color:var(--accent); box-shadow:0 0 6px rgba(0,212,255,0.25); }
-
-    /* ── Save / Edit btn ── */
+    .player-name-input:focus { border-color:var(--accent); box-shadow:0 0 6px rgba(0,212,255,0.2); }
     .name-action-btn {
-      flex-shrink:0; padding:3px 8px; border-radius:6px;
-      font-size:0.7rem; font-weight:700; cursor:pointer;
-      border:1px solid; transition:all 0.18s; white-space:nowrap;
+      flex-shrink:0; padding:2px 7px; border-radius:5px; font-size:0.65rem; font-weight:700;
+      cursor:pointer; border:1px solid; transition:all 0.18s; white-space:nowrap;
     }
-    .btn-save {
-      background:rgba(16,185,129,0.15); color:var(--green);
-      border-color:rgba(16,185,129,0.4);
-    }
-    .btn-save:hover { background:rgba(16,185,129,0.3); box-shadow:0 0 8px rgba(16,185,129,0.3); }
+    .btn-save { background:rgba(16,185,129,0.15); color:var(--green); border-color:rgba(16,185,129,0.4); }
+    .btn-save:hover { background:rgba(16,185,129,0.3); }
+    .btn-edit { background:rgba(0,212,255,0.1); color:var(--accent); border-color:rgba(0,212,255,0.3); }
+    .btn-edit:hover { background:rgba(0,212,255,0.22); }
 
-    .btn-edit {
-      background:rgba(0,212,255,0.1); color:var(--accent);
-      border-color:rgba(0,212,255,0.3);
+    /* ── SPOON SCORE ── */
+    .spoon-row { display:flex; align-items:center; gap:3px; flex-shrink:0; }
+    .spoon {
+      font-size:1.1rem; cursor:pointer; transition:all 0.2s;
+      filter:grayscale(1) brightness(0.4);
+      user-select:none; line-height:1;
     }
-    .btn-edit:hover { background:rgba(0,212,255,0.22); box-shadow:0 0 8px rgba(0,212,255,0.2); }
-
-    /* ── Score ── */
-    .player-score { display:flex; align-items:center; gap:4px; flex-shrink:0; }
-    .score-btn {
-      width:22px; height:22px; border-radius:50%; border:1px solid var(--border);
-      background:var(--surface2); color:var(--text-dim); font-size:0.75rem;
-      font-weight:700; cursor:pointer; display:flex; align-items:center;
-      justify-content:center; transition:all 0.15s; flex-shrink:0;
+    .spoon.active {
+      filter:none drop-shadow(0 0 6px #fbbf24) brightness(1.3);
+      animation:spoon-glow 0.4s ease;
     }
-    .score-btn:hover { background:var(--border); color:white; }
-    .score-btn.plus:hover  { background:rgba(16,185,129,0.3); color:var(--green); border-color:var(--green); }
-    .score-btn.minus:hover { background:rgba(239,68,68,0.3);  color:var(--red);   border-color:var(--red); }
-    .score-val { min-width:22px; text-align:center; font-size:0.9rem; font-weight:800; color:white; }
+    @keyframes spoon-glow {
+      0%   { transform:scale(1); }
+      50%  { transform:scale(1.4) rotate(-15deg); }
+      100% { transform:scale(1); }
+    }
 
     /* ── Promote btn ── */
     .promote-btn {
-      width:26px; height:26px; border-radius:6px; flex-shrink:0;
+      width:24px; height:24px; border-radius:6px; flex-shrink:0;
       border:1px solid rgba(251,191,36,0.3); background:rgba(251,191,36,0.1);
-      color:var(--gold); font-size:0.8rem; cursor:pointer;
+      color:var(--gold); font-size:0.75rem; cursor:pointer;
       display:flex; align-items:center; justify-content:center; transition:all 0.2s;
     }
     .promote-btn:hover { background:rgba(251,191,36,0.25); box-shadow:0 0 8px rgba(251,191,36,0.3); }
 
-    /* ── Player state ── */
+    /* ── Player States ── */
     .player-row.rank-1st { background:rgba(251,191,36,0.12); border-color:rgba(251,191,36,0.3); }
     .player-row.rank-1st .player-rank { background:var(--gold); color:#1a1a0a; }
-    .player-row.eliminated { opacity:0.32; }
+    .player-row.eliminated { opacity:0.3; }
     .player-row.advanced   { background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.25); }
     .player-row.advanced .player-rank { background:var(--green); color:white; }
-    .player-row.editing { background:rgba(0,212,255,0.06); border-color:rgba(0,212,255,0.25); }
+    .player-row.editing    { background:rgba(0,212,255,0.06); border-color:rgba(0,212,255,0.2); }
 
-    /* ── Flow ── */
-    .advance-flow { display:flex; align-items:center; justify-content:center; padding:12px 0; gap:8px; }
-    .flow-arrow { font-size:1.5rem; color:var(--accent); animation:bounce-down 1.5s ease infinite; }
-    @keyframes bounce-down {
-      0%,100% { transform:translateY(0); opacity:1; }
-      50%      { transform:translateY(6px); opacity:0.5; }
+    /* ── Flow Arrow ── */
+    .advance-flow { display:flex; align-items:center; justify-content:center; padding:10px 0; gap:8px; }
+    .flow-arrow { font-size:1.4rem; color:var(--accent); animation:bounce-down 1.5s ease infinite; }
+    @keyframes bounce-down { 0%,100%{transform:translateY(0);opacity:1} 50%{transform:translateY(6px);opacity:0.5} }
+    .flow-text { font-size:0.75rem; letter-spacing:2px; color:var(--text-dim); font-weight:600; }
+
+    /* ════════════════════════════════
+       QUALIFIER FINALISTS PANEL
+    ════════════════════════════════ */
+    .finalists-panel {
+      background:var(--surface);
+      border:1px solid rgba(0,212,255,0.25);
+      border-radius:16px; overflow:hidden; margin-bottom:0;
     }
-    .flow-text { font-size:0.78rem; letter-spacing:2px; color:var(--text-dim); font-weight:600; }
+    .finalists-header {
+      background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(124,58,237,0.15));
+      padding:12px 18px; display:flex; align-items:center; justify-content:space-between;
+    }
+    .finalists-header h3 { font-size:0.9rem; font-weight:800; letter-spacing:3px; color:var(--accent); }
+    .draw-btn {
+      display:flex; align-items:center; gap:6px;
+      padding:7px 16px; border-radius:10px; border:none; cursor:pointer;
+      background:linear-gradient(135deg,var(--accent2),#4c1d95);
+      color:white; font-size:0.8rem; font-weight:800; letter-spacing:1px;
+      transition:all 0.25s;
+    }
+    .draw-btn:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(124,58,237,0.5); }
+    .draw-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+    .draw-dice { font-size:1.2rem; display:inline-block; }
+    .draw-btn:not(:disabled):hover .draw-dice { animation:dice-roll 0.5s ease; }
+    @keyframes dice-roll {
+      0%   { transform:rotate(0deg) scale(1); }
+      25%  { transform:rotate(90deg) scale(1.3); }
+      50%  { transform:rotate(180deg) scale(1); }
+      75%  { transform:rotate(270deg) scale(1.3); }
+      100% { transform:rotate(360deg) scale(1); }
+    }
+
+    .finalists-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+    }
+    .finalist-slot {
+      padding:10px 12px; border-right:1px solid var(--border); border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:8px; transition:background 0.3s;
+    }
+    .finalist-slot:nth-child(3n) { border-right:none; }
+    .finalist-slot:nth-child(7),.finalist-slot:nth-child(8),.finalist-slot:nth-child(9) { border-bottom:none; }
+    .finalist-slot.empty { opacity:0.4; }
+    .finalist-num {
+      width:24px; height:24px; border-radius:50%; background:var(--surface2);
+      color:var(--text-dim); font-size:0.7rem; font-weight:800;
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .finalist-slot.filled .finalist-num { background:var(--accent); color:var(--bg); }
+    .finalist-info { flex:1; min-width:0; }
+    .finalist-name { font-size:0.84rem; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .finalist-from { font-size:0.62rem; color:var(--text-dim); letter-spacing:0.5px; margin-top:1px; }
+    .finalist-slot.shuffling { animation:slot-flash 0.15s ease infinite alternate; }
+    @keyframes slot-flash { from{background:var(--surface2)} to{background:rgba(124,58,237,0.2)} }
 
     /* ── Semi ── */
-    .semi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .semi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
     .semi-card { background:var(--surface); border:1px solid rgba(124,58,237,0.3); border-radius:14px; overflow:hidden; }
     .semi-header {
       background:linear-gradient(135deg,rgba(124,58,237,0.25),rgba(79,70,229,0.2));
-      padding:10px 14px; display:flex; align-items:center; justify-content:space-between;
+      padding:9px 12px; display:flex; align-items:center; justify-content:space-between;
     }
-    .semi-title { font-size:0.78rem; font-weight:800; letter-spacing:2px; color:#a78bfa; }
+    .semi-title { font-size:0.76rem; font-weight:800; letter-spacing:2px; color:#a78bfa; }
 
-    /* ── Final ── */
+    /* ════════════════════════════════
+       GRAND FINAL — SPOON BOXES
+    ════════════════════════════════ */
     .final-stage {
       background:var(--surface); border:1px solid rgba(251,191,36,0.35);
-      border-radius:16px; overflow:hidden; box-shadow:0 0 40px rgba(251,191,36,0.08);
+      border-radius:16px; overflow:hidden; box-shadow:0 0 40px rgba(251,191,36,0.07);
     }
     .final-header {
       background:linear-gradient(135deg,rgba(251,191,36,0.2),rgba(180,83,9,0.15));
-      padding:14px 20px; text-align:center;
+      padding:13px 18px; text-align:center;
     }
     .final-header h3 {
-      font-size:1.1rem; font-weight:900; letter-spacing:4px;
+      font-size:1rem; font-weight:900; letter-spacing:4px;
       background:linear-gradient(90deg,var(--gold),#fde68a,var(--gold));
       -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
     }
-    .final-players { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:16px; }
+    .final-players { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:14px; }
     .final-player-card {
       background:var(--surface2); border:1px solid var(--border);
-      border-radius:12px; padding:16px 12px; text-align:center; transition:all 0.3s;
+      border-radius:12px; padding:18px 12px; text-align:center; transition:all 0.3s;
+      position:relative; overflow:hidden;
+    }
+    .final-player-card::before {
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(circle at 50% 0%, rgba(251,191,36,0.05), transparent 70%);
+      pointer-events:none;
     }
     .final-player-card.champion {
       background:linear-gradient(135deg,rgba(251,191,36,0.2),rgba(180,83,9,0.1));
       border-color:rgba(251,191,36,0.6); box-shadow:var(--glow-gold);
     }
-    .final-player-medal { font-size:2rem; margin-bottom:8px; }
-    .final-player-name { font-size:1rem; font-weight:800; color:var(--text); margin-bottom:6px; min-height:1.4em; }
-    .final-player-origin { font-size:0.7rem; color:var(--text-dim); letter-spacing:1px; }
+    .final-medal { font-size:1.8rem; margin-bottom:6px; }
+    .final-name { font-size:1.05rem; font-weight:800; color:var(--text); margin-bottom:4px; min-height:1.4em; }
+    .final-from { font-size:0.65rem; color:var(--text-dim); letter-spacing:1px; margin-bottom:12px; }
+
+    /* Final spoon row */
+    .final-spoon-row { display:flex; justify-content:center; gap:6px; margin-bottom:10px; }
+    .final-spoon {
+      font-size:1.6rem; cursor:pointer; transition:all 0.25s;
+      filter:grayscale(1) brightness(0.35);
+      user-select:none;
+    }
+    .final-spoon.active {
+      filter:none drop-shadow(0 0 8px #fbbf24) brightness(1.4);
+      animation:spoon-glow 0.4s ease;
+    }
+
     .champion-btn {
-      margin-top:10px; padding:6px 14px; border-radius:8px;
+      margin-top:2px; padding:5px 14px; border-radius:8px;
       border:1px solid rgba(251,191,36,0.4); background:rgba(251,191,36,0.15);
-      color:var(--gold); font-size:0.75rem; font-weight:700;
+      color:var(--gold); font-size:0.72rem; font-weight:700;
       cursor:pointer; transition:all 0.2s; display:none;
     }
     .champion-btn:hover { background:rgba(251,191,36,0.3); box-shadow:0 0 12px rgba(251,191,36,0.3); }
 
     /* ── Winner Banner ── */
     .winner-banner {
-      display:none; text-align:center; padding:30px 20px; margin-top:20px;
+      display:none; text-align:center; padding:28px 20px; margin-top:18px;
       background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(124,58,237,0.1));
       border:2px solid var(--gold); border-radius:20px; animation:glow-pulse 2s ease infinite;
     }
-    @keyframes glow-pulse {
-      0%,100% { box-shadow:0 0 20px rgba(251,191,36,0.3); }
-      50%      { box-shadow:0 0 60px rgba(251,191,36,0.6); }
-    }
+    @keyframes glow-pulse { 0%,100%{box-shadow:0 0 20px rgba(251,191,36,0.3)} 50%{box-shadow:0 0 60px rgba(251,191,36,0.6)} }
     .winner-banner.show { display:block; }
-    .winner-banner .trophy { font-size:4rem; animation:spin-slow 4s linear infinite; }
-    @keyframes spin-slow { from { transform:rotateY(0deg); } to { transform:rotateY(360deg); } }
-    .winner-banner h2 { font-size:1rem; letter-spacing:4px; color:var(--gold); margin:12px 0 6px; }
-    .winner-banner .winner-name {
-      font-size:2.5rem; font-weight:900;
+    .winner-banner .trophy { font-size:3.8rem; animation:spin-slow 4s linear infinite; }
+    @keyframes spin-slow { from{transform:rotateY(0deg)} to{transform:rotateY(360deg)} }
+    .winner-banner h2 { font-size:0.95rem; letter-spacing:4px; color:var(--gold); margin:10px 0 4px; }
+    .winner-name {
+      font-size:2.2rem; font-weight:900;
       background:linear-gradient(90deg,var(--gold),#fde68a,var(--gold));
       -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
     }
@@ -331,23 +342,23 @@
     }
     @keyframes confetti-fall {
       0%   { transform:translateY(-20px) rotate(0deg); opacity:1; }
-      100% { transform:translateY(110vh)  rotate(720deg); opacity:0; }
+      100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
     }
 
     /* ── Toast ── */
     .toast {
-      position:fixed; top:24px; left:50%;
+      position:fixed; top:20px; left:50%;
       transform:translateX(-50%) translateY(-80px);
       background:linear-gradient(135deg,var(--surface2),var(--surface));
       border:1px solid var(--accent); border-radius:12px;
-      padding:12px 24px; font-size:0.9rem; font-weight:700; color:var(--accent);
+      padding:10px 22px; font-size:0.88rem; font-weight:700; color:var(--accent);
       z-index:1000; transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
       white-space:nowrap; box-shadow:var(--glow);
     }
     .toast.show { transform:translateX(-50%) translateY(0); }
 
     /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar { width:5px; }
     ::-webkit-scrollbar-track { background:var(--bg); }
     ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
 
@@ -355,13 +366,11 @@
     @media (max-width:960px) {
       .main-layout { grid-template-columns:1fr; }
       .timer-panel { position:static; }
-      .qualifier-grid { grid-template-columns:repeat(2,1fr); }
-      .semi-grid { grid-template-columns:repeat(2,1fr); }
-      .final-players { grid-template-columns:1fr; }
+      .qualifier-grid,.semi-grid { grid-template-columns:repeat(2,1fr); }
+      .final-players,.finalists-grid { grid-template-columns:1fr; }
     }
     @media (max-width:600px) {
-      .qualifier-grid { grid-template-columns:1fr; }
-      .semi-grid { grid-template-columns:1fr; }
+      .qualifier-grid,.semi-grid { grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -391,27 +400,44 @@
   <!-- CENTER -->
   <main class="tournament-container">
 
-    <!-- QUALIFIER -->
+    <!-- ░░ QUALIFIER ░░ -->
     <div class="section-header">
       <h2 style="color:var(--accent)">⚡ 예선 라운드</h2>
       <span class="badge badge-qualifier">QUALIFIER</span>
       <div class="section-line"></div>
-      <span style="font-size:0.75rem;color:var(--text-dim)">각 조 1위 본선 진출</span>
+      <span style="font-size:0.72rem;color:var(--text-dim)">각 조 수저 최다자 본선 진출</span>
     </div>
     <div class="qualifier-grid" id="qualifier-grid"></div>
 
+    <!-- ░░ QUALIFIER FINALISTS ░░ -->
     <div class="advance-flow">
       <div class="flow-arrow">↓</div>
-      <div class="flow-text">9개조 1위 → 본선 진출</div>
+      <div class="flow-text">예선 9조 1위 → 본선 진출</div>
       <div class="flow-arrow">↓</div>
     </div>
 
-    <!-- SEMI -->
+    <div class="finalists-panel" id="finalists-panel">
+      <div class="finalists-header">
+        <h3>🎖 본선 진출자 (9명)</h3>
+        <button class="draw-btn" id="draw-btn" onclick="doShuffle()">
+          <span class="draw-dice">🎲</span> 본선 추첨
+        </button>
+      </div>
+      <div class="finalists-grid" id="finalists-grid"></div>
+    </div>
+
+    <div class="advance-flow" style="padding:10px 0">
+      <div class="flow-arrow" style="color:#a78bfa">↓</div>
+      <div class="flow-text" style="color:#a78bfa">추첨 후 본선 3조 편성</div>
+      <div class="flow-arrow" style="color:#a78bfa">↓</div>
+    </div>
+
+    <!-- ░░ SEMI ░░ -->
     <div class="section-header">
       <h2 style="color:#a78bfa">🏆 본선 라운드</h2>
       <span class="badge badge-semi">SEMI-FINAL</span>
       <div class="section-line"></div>
-      <span style="font-size:0.75rem;color:var(--text-dim)">3조 각 1위 → 결선 진출</span>
+      <span style="font-size:0.72rem;color:var(--text-dim)">3조 각 수저 최다자 결선 진출</span>
     </div>
     <div class="semi-grid" id="semi-grid"></div>
 
@@ -421,7 +447,7 @@
       <div class="flow-arrow" style="color:var(--gold)">↓</div>
     </div>
 
-    <!-- FINAL -->
+    <!-- ░░ GRAND FINAL ░░ -->
     <div class="section-header">
       <h2 style="color:var(--gold)">👑 최종 결선</h2>
       <span class="badge badge-final">GRAND FINAL</span>
@@ -432,11 +458,10 @@
       <div class="final-players" id="final-players"></div>
     </div>
 
-    <!-- WINNER -->
     <div class="winner-banner" id="winner-banner">
       <div class="trophy">🏆</div>
       <h2>2026 UFO CUP KOREA</h2>
-      <div style="color:var(--text-dim);font-size:0.85rem;letter-spacing:3px;margin-bottom:12px;">CHAMPION</div>
+      <div style="color:var(--text-dim);font-size:0.82rem;letter-spacing:3px;margin-bottom:10px;">CHAMPION</div>
       <div class="winner-name" id="winner-name"></div>
     </div>
 
@@ -456,69 +481,59 @@
 </div>
 
 <script>
-/* ══════════════════════════════════
-   DEFAULT PLAYER NAMES (36명)
-══════════════════════════════════ */
+/* ══════════════════════════════════════════
+   DEFAULT NAMES
+══════════════════════════════════════════ */
 const DEFAULT_NAMES = [
-  // 예선 1조
   ['강민준','이서윤','박지호','최예린'],
-  // 예선 2조
   ['정우성','김나연','오준혁','신지아'],
-  // 예선 3조
   ['한승우','윤채원','임도현','장하은'],
-  // 예선 4조
   ['조민서','배수진','권태양','류지현'],
-  // 예선 5조
   ['문성준','서아름','노태훈','엄지수'],
-  // 예선 6조
   ['심재원','고은별','안준서','변하린'],
-  // 예선 7조
   ['남기훈','황소연','전민재','석다은'],
-  // 예선 8조
   ['구자훈','마유진','원도경','표나리'],
-  // 예선 9조
   ['방성혁','진미래','사공준','도예지'],
 ];
 
-/* ══════════════════════════════════
-   STATE
-══════════════════════════════════ */
-const QUAL_GROUPS    = 9;
-const QUAL_PER_GROUP = 4;
-const SEMI_GROUPS    = 3;
-const SEMI_PER_GROUP = 3;
+const MAX_SPOONS    = 3;
+const QUAL_GROUPS   = 9;
+const QUAL_PER      = 4;
+const SEMI_GROUPS   = 3;
+const SEMI_PER      = 3;
 
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
 const state = {
   qualifier: Array.from({length: QUAL_GROUPS}, (_, gi) => ({
     done: false,
-    players: Array.from({length: QUAL_PER_GROUP}, (_, pi) => ({
+    players: Array.from({length: QUAL_PER}, (_, pi) => ({
       name: DEFAULT_NAMES[gi][pi],
-      score: 0,
+      spoons: 0,
       advanced: false,
       eliminated: false,
       editing: false,
     }))
   })),
-  semi: Array.from({length: SEMI_GROUPS}, (_, gi) => ({
+  // 예선 통과자 9명 슬롯 (순서 섞임)
+  finalists: Array.from({length: 9}, () => ({ name:'', from:'' })),
+  shuffled: false,   // 추첨 완료 여부
+  semi: Array.from({length: SEMI_GROUPS}, () => ({
     done: false,
-    players: Array.from({length: SEMI_PER_GROUP}, (_, pi) => ({
-      name: '',
-      score: 0,
-      advanced: false,
-      eliminated: false,
-      from: null,
-      editing: false,
+    players: Array.from({length: SEMI_PER}, () => ({
+      name: '', spoons: 0, advanced: false, eliminated: false, from:'', editing:false,
     }))
   })),
   final: Array.from({length: 3}, () => ({
-    name: '', score: 0, champion: false, from: null,
+    name:'', spoons:0, champion:false, from:'',
   })),
   champion: null,
 };
 
-/* ══════════════════════════════════
+/* ══════════════════════════════════════════
    RENDER QUALIFIER
-══════════════════════════════════ */
+══════════════════════════════════════════ */
 function renderQualifier() {
   const grid = document.getElementById('qualifier-grid');
   grid.innerHTML = '';
@@ -526,29 +541,23 @@ function renderQualifier() {
     const card = document.createElement('div');
     card.className = 'group-card';
     card.id = `q-card-${gi}`;
-
     card.innerHTML = `
       <div class="group-header">
-        <span class="group-title">예선 ${gi + 1}조</span>
-        <span class="group-status ${group.done ? 'done' : ''}" id="q-status-${gi}"
-              onclick="toggleGroupDone('qualifier',${gi})" title="클릭하여 완료 처리">
-          ${group.done ? '✔ 완료' : '진행중'}
-        </span>
+        <span class="group-title">예선 ${gi+1}조</span>
+        <span class="group-status${group.done?' done':''}" id="q-status-${gi}"
+              onclick="toggleDone('qualifier',${gi})">${group.done?'✔ 완료':'진행중'}</span>
       </div>
       <div class="player-list" id="q-list-${gi}"></div>
     `;
     grid.appendChild(card);
-
     const list = card.querySelector(`#q-list-${gi}`);
-    group.players.forEach((player, pi) => {
-      list.appendChild(buildPlayerRow('qualifier', gi, pi, player));
-    });
+    group.players.forEach((p, pi) => list.appendChild(buildRow('qualifier', gi, pi, p)));
   });
 }
 
-/* ══════════════════════════════════
+/* ══════════════════════════════════════════
    RENDER SEMI
-══════════════════════════════════ */
+══════════════════════════════════════════ */
 function renderSemi() {
   const grid = document.getElementById('semi-grid');
   grid.innerHTML = '';
@@ -556,29 +565,47 @@ function renderSemi() {
     const card = document.createElement('div');
     card.className = 'semi-card';
     card.id = `s-card-${gi}`;
-
     card.innerHTML = `
       <div class="semi-header">
-        <span class="semi-title">본선 ${gi + 1}조</span>
-        <span class="group-status ${group.done ? 'done' : ''}" id="s-status-${gi}"
-              onclick="toggleGroupDone('semi',${gi})" title="클릭하여 완료 처리">
-          ${group.done ? '✔ 완료' : '진행중'}
-        </span>
+        <span class="semi-title">본선 ${gi+1}조</span>
+        <span class="group-status${group.done?' done':''}" id="s-status-${gi}"
+              onclick="toggleDone('semi',${gi})">${group.done?'✔ 완료':'진행중'}</span>
       </div>
       <div class="player-list" id="s-list-${gi}"></div>
     `;
     grid.appendChild(card);
-
     const list = card.querySelector(`#s-list-${gi}`);
-    group.players.forEach((player, pi) => {
-      list.appendChild(buildPlayerRow('semi', gi, pi, player));
-    });
+    group.players.forEach((p, pi) => list.appendChild(buildRow('semi', gi, pi, p)));
   });
 }
 
-/* ══════════════════════════════════
+/* ══════════════════════════════════════════
+   RENDER FINALISTS PANEL
+══════════════════════════════════════════ */
+function renderFinalists() {
+  const grid = document.getElementById('finalists-grid');
+  grid.innerHTML = '';
+  state.finalists.forEach((f, i) => {
+    const slot = document.createElement('div');
+    slot.className = `finalist-slot${f.name ? ' filled' : ' empty'}`;
+    slot.id = `finalist-${i}`;
+    slot.innerHTML = `
+      <div class="finalist-num">${i+1}</div>
+      <div class="finalist-info">
+        <div class="finalist-name">${f.name || '대기중…'}</div>
+        <div class="finalist-from">${f.from || ''}</div>
+      </div>
+    `;
+    grid.appendChild(slot);
+  });
+  // draw 버튼 활성/비활성
+  const allFilled = state.finalists.every(f => f.name);
+  document.getElementById('draw-btn').disabled = !allFilled || state.shuffled;
+}
+
+/* ══════════════════════════════════════════
    RENDER FINAL
-══════════════════════════════════ */
+══════════════════════════════════════════ */
 function renderFinal() {
   const container = document.getElementById('final-players');
   container.innerHTML = '';
@@ -587,33 +614,33 @@ function renderFinal() {
 
   state.final.forEach((player, i) => {
     const card = document.createElement('div');
-    card.className = `final-player-card${player.champion ? ' champion' : ''}`;
+    card.className = `final-player-card${player.champion?' champion':''}`;
     card.id = `f-card-${i}`;
 
-    const fromLabel = player.from
-      ? `<div class="final-player-origin">← ${player.from}</div>`
-      : `<div class="final-player-origin">${labels[i]}</div>`;
+    // spoon row
+    let spoonHtml = '<div class="final-spoon-row">';
+    for (let s = 0; s < MAX_SPOONS; s++) {
+      spoonHtml += `<span class="final-spoon${s < player.spoons?' active':''}"
+                         onclick="clickFinalSpoon(${i},${s})">🥄</span>`;
+    }
+    spoonHtml += '</div>';
 
     card.innerHTML = `
-      <div class="final-player-medal">${player.champion ? '🏆' : medals[i]}</div>
-      <div class="final-player-name">${player.name || '—'}</div>
-      ${fromLabel}
-      <div class="player-score" style="justify-content:center;margin-top:10px;">
-        <button class="score-btn minus" onclick="adjustFinalScore(${i},-1)">−</button>
-        <span class="score-val" id="f-score-${i}">${player.score}</span>
-        <button class="score-btn plus"  onclick="adjustFinalScore(${i},1)">+</button>
-      </div>
-      <button class="champion-btn" id="f-champ-btn-${i}" onclick="setChampion(${i})">👑 우승</button>
+      <div class="final-medal">${player.champion ? '🏆' : medals[i]}</div>
+      <div class="final-name">${player.name || '—'}</div>
+      <div class="final-from">${player.from || labels[i]}</div>
+      ${spoonHtml}
+      <button class="champion-btn" id="f-champ-btn-${i}" onclick="setChampion(${i})">👑 우승 선언</button>
     `;
     if (player.name) card.querySelector('.champion-btn').style.display = 'inline-block';
     container.appendChild(card);
   });
 }
 
-/* ══════════════════════════════════
-   BUILD PLAYER ROW (저장 / 수정)
-══════════════════════════════════ */
-function buildPlayerRow(stage, gi, pi, player) {
+/* ══════════════════════════════════════════
+   BUILD PLAYER ROW
+══════════════════════════════════════════ */
+function buildRow(stage, gi, pi, player) {
   const row = document.createElement('div');
   let cls = 'player-row';
   if      (player.advanced)   cls += ' advanced';
@@ -622,217 +649,211 @@ function buildPlayerRow(stage, gi, pi, player) {
   row.className = cls;
   row.id = `${stage}-${gi}-${pi}`;
 
-  /* rank badge */
+  // rank
   const rankEl = document.createElement('div');
   rankEl.className = 'player-rank';
   rankEl.textContent = pi + 1;
 
-  /* name area */
+  // name area
   const nameArea = document.createElement('div');
   nameArea.className = 'name-area';
 
   if (player.editing) {
-    /* ── EDIT MODE ── */
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'player-name-input';
-    input.value = player.name;
-    input.maxLength = 12;
-    input.placeholder = `선수 ${pi + 1}`;
-    input.id = `input-${stage}-${gi}-${pi}`;
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter') saveName(stage, gi, pi);
-    });
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.className = 'player-name-input';
+    inp.value = player.name; inp.maxLength = 12;
+    inp.placeholder = `선수 ${pi+1}`;
+    inp.id = `inp-${stage}-${gi}-${pi}`;
+    inp.addEventListener('keydown', e => { if (e.key==='Enter') saveName(stage,gi,pi); });
 
     const saveBtn = document.createElement('button');
     saveBtn.className = 'name-action-btn btn-save';
     saveBtn.textContent = '저장';
     saveBtn.onclick = () => saveName(stage, gi, pi);
 
-    nameArea.appendChild(input);
+    nameArea.appendChild(inp);
     nameArea.appendChild(saveBtn);
-    setTimeout(() => input.focus(), 50);
-
+    setTimeout(() => inp.focus(), 40);
   } else {
-    /* ── VIEW MODE ── */
-    const display = document.createElement('div');
-    display.className = `player-name-display${player.name ? '' : ' empty'}`;
-    display.textContent = player.name || `선수 ${pi + 1}`;
+    const disp = document.createElement('div');
+    disp.className = `player-name-display${player.name?'':' empty'}`;
+    disp.textContent = player.name || `선수 ${pi+1}`;
 
     const editBtn = document.createElement('button');
     editBtn.className = 'name-action-btn btn-edit';
     editBtn.textContent = '수정';
     editBtn.onclick = () => startEdit(stage, gi, pi);
 
-    nameArea.appendChild(display);
+    nameArea.appendChild(disp);
     nameArea.appendChild(editBtn);
   }
 
-  /* score */
-  const scoreDiv = document.createElement('div');
-  scoreDiv.className = 'player-score';
-
-  const minusBtn = document.createElement('button');
-  minusBtn.className = 'score-btn minus';
-  minusBtn.textContent = '−';
-  minusBtn.onclick = () => adjustScore(stage, gi, pi, -1);
-
-  const scoreVal = document.createElement('span');
-  scoreVal.className = 'score-val';
-  scoreVal.id = `score-${stage}-${gi}-${pi}`;
-  scoreVal.textContent = player.score;
-
-  const plusBtn = document.createElement('button');
-  plusBtn.className = 'score-btn plus';
-  plusBtn.textContent = '+';
-  plusBtn.onclick = () => adjustScore(stage, gi, pi, 1);
-
-  scoreDiv.appendChild(minusBtn);
-  scoreDiv.appendChild(scoreVal);
-  scoreDiv.appendChild(plusBtn);
-
-  /* promote */
-  const promoteBtn = document.createElement('button');
-  promoteBtn.className = 'promote-btn';
-  promoteBtn.title = '다음 라운드 진출';
-  promoteBtn.textContent = '↑';
-  promoteBtn.style.visibility = pi === 0 ? 'visible' : 'hidden';
-  if (player.advanced) {
-    promoteBtn.style.background = 'rgba(16,185,129,0.3)';
-    promoteBtn.style.color = '#6ee7b7';
+  // spoons
+  const spoonRow = document.createElement('div');
+  spoonRow.className = 'spoon-row';
+  for (let s = 0; s < MAX_SPOONS; s++) {
+    const sp = document.createElement('span');
+    sp.className = `spoon${s < player.spoons ? ' active' : ''}`;
+    sp.textContent = '🥄';
+    sp.onclick = () => clickSpoon(stage, gi, pi, s);
+    spoonRow.appendChild(sp);
   }
-  promoteBtn.onclick = () => promotePlayer(stage, gi, pi);
+
+  // promote (rank 0 only)
+  const promBtn = document.createElement('button');
+  promBtn.className = 'promote-btn';
+  promBtn.title = '다음 라운드 진출';
+  promBtn.textContent = '↑';
+  promBtn.style.visibility = pi === 0 ? 'visible' : 'hidden';
+  if (player.advanced) { promBtn.style.background='rgba(16,185,129,0.3)'; promBtn.style.color='#6ee7b7'; }
+  promBtn.onclick = () => promotePlayer(stage, gi, pi);
 
   row.appendChild(rankEl);
   row.appendChild(nameArea);
-  row.appendChild(scoreDiv);
-  row.appendChild(promoteBtn);
+  row.appendChild(spoonRow);
+  row.appendChild(promBtn);
   return row;
 }
 
-/* ══════════════════════════════════
+/* ══════════════════════════════════════════
+   SPOON CLICK (qualifier / semi)
+══════════════════════════════════════════ */
+function clickSpoon(stage, gi, pi, spoonIdx) {
+  const grp = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
+  const player = grp.players[pi];
+  // toggle: if clicking the last active spoon → turn off; else set to spoonIdx+1
+  if (player.spoons === spoonIdx + 1) {
+    player.spoons = 0;
+  } else {
+    player.spoons = spoonIdx + 1;
+  }
+  refreshRow(stage, gi, pi);
+  sortBySpoons(stage, gi);
+  saveState();
+}
+
+/* ══════════════════════════════════════════
+   SPOON CLICK (final)
+══════════════════════════════════════════ */
+function clickFinalSpoon(i, spoonIdx) {
+  const player = state.final[i];
+  if (player.spoons === spoonIdx + 1) player.spoons = 0;
+  else player.spoons = spoonIdx + 1;
+  // re-render final spoons only
+  const row = document.getElementById(`f-card-${i}`);
+  if (!row) return;
+  const spans = row.querySelectorAll('.final-spoon');
+  spans.forEach((sp, s) => {
+    sp.className = `final-spoon${s < player.spoons ? ' active' : ''}`;
+  });
+  sortFinalBySpoons();
+  saveState();
+}
+
+/* ══════════════════════════════════════════
+   SORT BY SPOONS
+══════════════════════════════════════════ */
+function sortBySpoons(stage, gi) {
+  const grp = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
+  const sorted = grp.players.map((p,i)=>({p,i})).sort((a,b)=>b.p.spoons - a.p.spoons);
+  sorted.forEach(({p,i}, rank) => {
+    const row = document.getElementById(`${stage}-${gi}-${i}`);
+    if (!row) return;
+    let cls = 'player-row';
+    if      (p.advanced)   cls += ' advanced';
+    else if (p.eliminated) cls += ' eliminated';
+    else if (p.editing)    cls += ' editing';
+    else if (rank===0 && p.name) cls += ' rank-1st';
+    row.className = cls;
+    const rEl = row.querySelector('.player-rank');
+    if (rEl) rEl.textContent = rank + 1;
+  });
+}
+
+function sortFinalBySpoons() {
+  // visual only — gold border on max spoon holder
+  const maxSpoons = Math.max(...state.final.map(p=>p.spoons));
+  state.final.forEach((p, i) => {
+    const card = document.getElementById(`f-card-${i}`);
+    if (!card || p.champion) return;
+    if (p.spoons === maxSpoons && maxSpoons > 0) {
+      card.style.borderColor = 'rgba(251,191,36,0.55)';
+      card.style.background  = 'linear-gradient(135deg,rgba(251,191,36,0.12),rgba(180,83,9,0.07))';
+    } else {
+      card.style.borderColor = '';
+      card.style.background  = '';
+    }
+  });
+}
+
+/* ══════════════════════════════════════════
    NAME EDIT / SAVE
-══════════════════════════════════ */
+══════════════════════════════════════════ */
 function startEdit(stage, gi, pi) {
-  const grp = stage === 'qualifier' ? state.qualifier[gi] : state.semi[gi];
+  const grp = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
   grp.players[pi].editing = true;
   refreshRow(stage, gi, pi);
 }
 
 function saveName(stage, gi, pi) {
-  const input = document.getElementById(`input-${stage}-${gi}-${pi}`);
-  if (!input) return;
-  const val = input.value.trim();
-  const grp  = stage === 'qualifier' ? state.qualifier[gi] : state.semi[gi];
+  const inp = document.getElementById(`inp-${stage}-${gi}-${pi}`);
+  if (!inp) return;
+  const val = inp.value.trim();
+  const grp = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
   grp.players[pi].name    = val;
   grp.players[pi].editing = false;
   refreshRow(stage, gi, pi);
-  sortAndHighlight(stage, gi);
+  sortBySpoons(stage, gi);
   saveState();
-  showToast(`✅ 저장 완료: ${val || '(이름 없음)'}`);
+  showToast(`✅ 저장: ${val || '(없음)'}`);
 }
 
-/* 해당 행만 다시 그리기 */
 function refreshRow(stage, gi, pi) {
-  const grp    = stage === 'qualifier' ? state.qualifier[gi] : state.semi[gi];
-  const player = grp.players[pi];
-  const listId = stage === 'qualifier' ? `q-list-${gi}` : `s-list-${gi}`;
-  const list   = document.getElementById(listId);
-  const oldRow = document.getElementById(`${stage}-${gi}-${pi}`);
-  const newRow = buildPlayerRow(stage, gi, pi, player);
-  if (oldRow && list) list.replaceChild(newRow, oldRow);
+  const grp  = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
+  const p    = grp.players[pi];
+  const lid  = stage==='qualifier' ? `q-list-${gi}` : `s-list-${gi}`;
+  const list = document.getElementById(lid);
+  const old  = document.getElementById(`${stage}-${gi}-${pi}`);
+  const nw   = buildRow(stage, gi, pi, p);
+  if (old && list) list.replaceChild(nw, old);
 }
 
-/* ══════════════════════════════════
-   SCORE
-══════════════════════════════════ */
-function adjustScore(stage, gi, pi, delta) {
-  const grp = stage === 'qualifier' ? state.qualifier[gi] : state.semi[gi];
-  grp.players[pi].score = Math.max(0, grp.players[pi].score + delta);
-  const el = document.getElementById(`score-${stage}-${gi}-${pi}`);
-  if (el) el.textContent = grp.players[pi].score;
-  sortAndHighlight(stage, gi);
-  saveState();
-}
-
-function adjustFinalScore(i, delta) {
-  state.final[i].score = Math.max(0, state.final[i].score + delta);
-  const el = document.getElementById(`f-score-${i}`);
-  if (el) el.textContent = state.final[i].score;
-  saveState();
-}
-
-/* ══════════════════════════════════
-   SORT & HIGHLIGHT
-══════════════════════════════════ */
-function sortAndHighlight(stage, gi) {
-  const grp    = stage === 'qualifier' ? state.qualifier[gi] : state.semi[gi];
-  const sorted = grp.players.map((p,i) => ({p,i}))
-                             .sort((a,b) => b.p.score - a.p.score);
-  sorted.forEach(({p, i}, rank) => {
-    const row = document.getElementById(`${stage}-${gi}-${i}`);
-    if (!row) return;
-    // rebuild class
-    let cls = 'player-row';
-    if      (p.advanced)   cls += ' advanced';
-    else if (p.eliminated) cls += ' eliminated';
-    else if (p.editing)    cls += ' editing';
-    else if (rank === 0 && p.name) cls += ' rank-1st';
-    row.className = cls;
-    const rankEl = row.querySelector('.player-rank');
-    if (rankEl) rankEl.textContent = rank + 1;
-  });
-}
-
-/* ══════════════════════════════════
-   GROUP DONE TOGGLE
-══════════════════════════════════ */
-function toggleGroupDone(stage, gi) {
-  const grp = stage === 'qualifier' ? state.qualifier[gi] : state.semi[gi];
-  grp.done = !grp.done;
-  const prefix = stage === 'qualifier' ? 'q' : 's';
-  const el = document.getElementById(`${prefix}-status-${gi}`);
-  el.textContent  = grp.done ? '✔ 완료' : '진행중';
-  el.className    = `group-status${grp.done ? ' done' : ''}`;
-  saveState();
-}
-
-/* ══════════════════════════════════
-   PROMOTE
-══════════════════════════════════ */
+/* ══════════════════════════════════════════
+   PROMOTE PLAYER
+══════════════════════════════════════════ */
 function promotePlayer(stage, gi, pi) {
   if (stage === 'qualifier') {
     const player = state.qualifier[gi].players[pi];
-    if (!player.name) { showToast('선수 이름을 먼저 저장해주세요.'); return; }
+    if (!player.name) { showToast('이름을 먼저 저장해주세요.'); return; }
 
-    const semiGi   = Math.floor(gi / 3);
-    const semiGroup = state.semi[semiGi];
-    const emptySlot = semiGroup.players.findIndex(p => !p.name);
-    if (emptySlot === -1) { showToast(`본선 ${semiGi+1}조가 이미 가득 찼습니다.`); return; }
+    // push to finalists
+    const slot = state.finalists.findIndex(f => !f.name);
+    if (slot === -1) { showToast('예선 진출자가 이미 9명입니다.'); return; }
 
     player.advanced = true;
-    state.qualifier[gi].players.forEach((p,i) => { if (i !== pi) p.eliminated = true; });
-    semiGroup.players[emptySlot].name = player.name;
-    semiGroup.players[emptySlot].from = `예선 ${gi+1}조 1위`;
+    state.qualifier[gi].players.forEach((p,i) => { if (i!==pi) p.eliminated = true; });
     state.qualifier[gi].done = true;
 
+    state.finalists[slot].name = player.name;
+    state.finalists[slot].from = `예선 ${gi+1}조 1위`;
+
     renderQualifier();
-    renderSemi();
+    renderFinalists();
     saveState();
-    showToast(`🎉 ${player.name} → 본선 ${semiGi+1}조 진출!`);
+    showToast(`🎉 ${player.name} → 본선 진출자 ${slot+1}번!`);
 
   } else if (stage === 'semi') {
     const player = state.semi[gi].players[pi];
-    if (!player.name) { showToast('선수 이름을 먼저 저장해주세요.'); return; }
+    if (!player.name) { showToast('이름을 먼저 저장해주세요.'); return; }
 
-    const emptySlot = state.final.findIndex(p => !p.name);
-    if (emptySlot === -1) { showToast('결선 자리가 모두 찼습니다.'); return; }
+    const slot = state.final.findIndex(p => !p.name);
+    if (slot === -1) { showToast('결선 자리가 모두 찼습니다.'); return; }
 
     player.advanced = true;
-    state.semi[gi].players.forEach((p,i) => { if (i !== pi) p.eliminated = true; });
-    state.final[emptySlot].name = player.name;
-    state.final[emptySlot].from = `본선 ${gi+1}조 1위`;
+    state.semi[gi].players.forEach((p,i) => { if (i!==pi) p.eliminated = true; });
     state.semi[gi].done = true;
+    state.final[slot].name = player.name;
+    state.final[slot].from = `본선 ${gi+1}조 1위`;
 
     renderSemi();
     renderFinal();
@@ -841,13 +862,73 @@ function promotePlayer(stage, gi, pi) {
   }
 }
 
-/* ══════════════════════════════════
+/* ══════════════════════════════════════════
+   SHUFFLE / DRAW (본선 추첨)
+══════════════════════════════════════════ */
+function doShuffle() {
+  if (state.shuffled) return;
+  const btn = document.getElementById('draw-btn');
+  btn.disabled = true;
+
+  // Fisher-Yates shuffle
+  const arr = [...state.finalists];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+
+  // animate slots
+  let frame = 0;
+  const totalFrames = 20;
+  const slots = document.querySelectorAll('.finalist-slot');
+
+  const animate = setInterval(() => {
+    slots.forEach(s => s.classList.toggle('shuffling'));
+    frame++;
+    if (frame >= totalFrames) {
+      clearInterval(animate);
+      slots.forEach(s => s.classList.remove('shuffling'));
+
+      // apply shuffled order
+      state.finalists = arr;
+      state.shuffled = true;
+
+      // assign to semi groups (0-2 → S0, 3-5 → S1, 6-8 → S2)
+      state.finalists.forEach((f, idx) => {
+        const sGi = Math.floor(idx / 3);
+        const sPi = idx % 3;
+        state.semi[sGi].players[sPi].name = f.name;
+        state.semi[sGi].players[sPi].from = f.from;
+      });
+
+      renderFinalists();
+      renderSemi();
+      saveState();
+      showToast('🎲 본선 추첨 완료! 본선 3조가 편성되었습니다.');
+    }
+  }, 80);
+}
+
+/* ══════════════════════════════════════════
+   TOGGLE GROUP DONE
+══════════════════════════════════════════ */
+function toggleDone(stage, gi) {
+  const grp = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
+  grp.done = !grp.done;
+  const prefix = stage==='qualifier' ? 'q' : 's';
+  const el = document.getElementById(`${prefix}-status-${gi}`);
+  el.textContent = grp.done ? '✔ 완료' : '진행중';
+  el.className = `group-status${grp.done?' done':''}`;
+  saveState();
+}
+
+/* ══════════════════════════════════════════
    CHAMPION
-══════════════════════════════════ */
+══════════════════════════════════════════ */
 function setChampion(i) {
   const player = state.final[i];
   if (!player.name) return;
-  state.final.forEach((p,idx) => p.champion = idx === i);
+  state.final.forEach((p,idx) => p.champion = idx===i);
   state.champion = player.name;
   renderFinal();
   showWinner(player.name);
@@ -862,139 +943,130 @@ function showWinner(name) {
   spawnConfetti();
 }
 
-/* ══════════════════════════════════
+/* ══════════════════════════════════════════
    CONFETTI
-══════════════════════════════════ */
+══════════════════════════════════════════ */
 function spawnConfetti() {
-  const colors = ['#fbbf24','#00d4ff','#7c3aed','#10b981','#ef4444','#f472b6'];
-  for (let i = 0; i < 90; i++) {
-    setTimeout(() => {
-      const el = document.createElement('div');
-      el.className = 'confetti-piece';
-      el.style.left = Math.random() * 100 + 'vw';
-      el.style.background = colors[Math.floor(Math.random() * colors.length)];
-      el.style.animationDuration = (2 + Math.random() * 2) + 's';
-      el.style.animationDelay    = (Math.random() * 0.5) + 's';
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 5000);
-    }, i * 30);
-  }
+  const colors=['#fbbf24','#00d4ff','#7c3aed','#10b981','#ef4444','#f472b6'];
+  for (let i=0;i<90;i++) setTimeout(()=>{
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.left=Math.random()*100+'vw';
+    el.style.background=colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDuration=(2+Math.random()*2)+'s';
+    el.style.animationDelay=(Math.random()*0.5)+'s';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),5000);
+  }, i*30);
 }
 
-/* ══════════════════════════════════
+/* ══════════════════════════════════════════
    TOAST
-══════════════════════════════════ */
+══════════════════════════════════════════ */
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
   clearTimeout(t._tid);
-  t._tid = setTimeout(() => t.classList.remove('show'), 3000);
+  t._tid=setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-/* ══════════════════════════════════
+/* ══════════════════════════════════════════
    TIMERS
-══════════════════════════════════ */
+══════════════════════════════════════════ */
 const timers = {
-  prep:    { total: 5*60, remaining: 5*60, interval: null, running: false },
-  extract: { total: 7*60, remaining: 7*60, interval: null, running: false },
+  prep:    {total:5*60,remaining:5*60,interval:null,running:false},
+  extract: {total:7*60,remaining:7*60,interval:null,running:false},
 };
-
-function timerStart(id) {
-  const t = timers[id];
-  if (t.running) return;
-  if (t.remaining <= 0) timerReset(id);
-  t.running = true;
-  const btn = document.getElementById(`${id}-toggle`);
-  btn.textContent = '⏸ 일시중지'; btn.classList.add('active');
-  t.interval = setInterval(() => tickTimer(id), 1000);
+function timerStart(id){
+  const t=timers[id]; if(t.running)return;
+  if(t.remaining<=0) timerReset(id);
+  t.running=true;
+  const btn=document.getElementById(`${id}-toggle`);
+  btn.textContent='⏸ 일시중지'; btn.classList.add('active');
+  t.interval=setInterval(()=>tickTimer(id),1000);
 }
-
-function timerToggle(id) {
-  const t = timers[id];
-  const btn = document.getElementById(`${id}-toggle`);
-  if (t.running) {
-    clearInterval(t.interval); t.running = false;
-    btn.textContent = '▶ 재개'; btn.classList.remove('active');
+function timerToggle(id){
+  const t=timers[id]; const btn=document.getElementById(`${id}-toggle`);
+  if(t.running){
+    clearInterval(t.interval); t.running=false;
+    btn.textContent='▶ 재개'; btn.classList.remove('active');
   } else {
-    if (t.remaining <= 0) return;
-    t.running = true;
-    btn.textContent = '⏸ 일시중지'; btn.classList.add('active');
-    t.interval = setInterval(() => tickTimer(id), 1000);
+    if(t.remaining<=0)return; t.running=true;
+    btn.textContent='⏸ 일시중지'; btn.classList.add('active');
+    t.interval=setInterval(()=>tickTimer(id),1000);
   }
 }
-
-function timerReset(id) {
-  const t = timers[id];
-  clearInterval(t.interval); t.running = false; t.remaining = t.total;
-  const btn = document.getElementById(`${id}-toggle`);
-  btn.textContent = '⏸ 일시중지'; btn.classList.remove('active');
+function timerReset(id){
+  const t=timers[id]; clearInterval(t.interval); t.running=false; t.remaining=t.total;
+  const btn=document.getElementById(`${id}-toggle`);
+  btn.textContent='⏸ 일시중지'; btn.classList.remove('active');
   document.getElementById(`${id}-display`).classList.remove('warning');
   updateTimerDisplay(id);
 }
-
-function tickTimer(id) {
-  const t = timers[id];
-  if (t.remaining > 0) {
-    t.remaining--;
-    updateTimerDisplay(id);
-  } else {
-    clearInterval(t.interval); t.running = false;
-    const btn = document.getElementById(`${id}-toggle`);
-    btn.textContent = '⏸ 일시중지'; btn.classList.remove('active');
+function tickTimer(id){
+  const t=timers[id];
+  if(t.remaining>0){ t.remaining--; updateTimerDisplay(id); }
+  else {
+    clearInterval(t.interval); t.running=false;
+    const btn=document.getElementById(`${id}-toggle`);
+    btn.textContent='⏸ 일시중지'; btn.classList.remove('active');
     document.getElementById(`${id}-display`).classList.add('warning');
-    showToast(id === 'prep' ? '⏰ 준비 시간 종료!' : '⏰ 추출 시간 종료!');
+    showToast(id==='prep'?'⏰ 준비 시간 종료!':'⏰ 추출 시간 종료!');
   }
 }
-
-function updateTimerDisplay(id) {
-  const t = timers[id];
-  const m = String(Math.floor(t.remaining / 60)).padStart(2,'0');
-  const s = String(t.remaining % 60).padStart(2,'0');
-  const display = document.getElementById(`${id}-display`);
-  display.textContent = `${m}:${s}`;
-  document.getElementById(`${id}-bar`).style.width = (t.remaining / t.total * 100) + '%';
-  if (t.remaining <= 30 && t.remaining > 0) display.classList.add('warning');
+function updateTimerDisplay(id){
+  const t=timers[id];
+  const m=String(Math.floor(t.remaining/60)).padStart(2,'0');
+  const s=String(t.remaining%60).padStart(2,'0');
+  const display=document.getElementById(`${id}-display`);
+  display.textContent=`${m}:${s}`;
+  document.getElementById(`${id}-bar`).style.width=(t.remaining/t.total*100)+'%';
+  if(t.remaining<=30&&t.remaining>0) display.classList.add('warning');
   else display.classList.remove('warning');
 }
 
-/* ══════════════════════════════════
+/* ══════════════════════════════════════════
    LOCAL STORAGE
-══════════════════════════════════ */
-function saveState() {
+══════════════════════════════════════════ */
+function saveState(){
   try {
-    localStorage.setItem('ufo2026_v2', JSON.stringify({
+    localStorage.setItem('ufo2026_v3', JSON.stringify({
       qualifier: state.qualifier,
+      finalists: state.finalists,
+      shuffled:  state.shuffled,
       semi:      state.semi,
       final:     state.final,
       champion:  state.champion,
     }));
-  } catch(e) {}
+  } catch(e){}
 }
-
-function loadState() {
+function loadState(){
   try {
-    const raw = localStorage.getItem('ufo2026_v2');
-    if (!raw) return;
-    const saved = JSON.parse(raw);
-    if (saved.qualifier) state.qualifier = saved.qualifier;
-    if (saved.semi)      state.semi      = saved.semi;
-    if (saved.final)     state.final     = saved.final;
-    if (saved.champion)  state.champion  = saved.champion;
-  } catch(e) {}
+    const raw=localStorage.getItem('ufo2026_v3');
+    if(!raw) return;
+    const s=JSON.parse(raw);
+    if(s.qualifier) state.qualifier=s.qualifier;
+    if(s.finalists) state.finalists=s.finalists;
+    if(s.shuffled  !== undefined) state.shuffled=s.shuffled;
+    if(s.semi)      state.semi=s.semi;
+    if(s.final)     state.final=s.final;
+    if(s.champion)  state.champion=s.champion;
+  } catch(e){}
 }
 
-/* ══════════════════════════════════
+/* ══════════════════════════════════════════
    INIT
-══════════════════════════════════ */
-function init() {
+══════════════════════════════════════════ */
+function init(){
   loadState();
   renderQualifier();
+  renderFinalists();
   renderSemi();
   renderFinal();
-  for (let gi = 0; gi < QUAL_GROUPS;  gi++) sortAndHighlight('qualifier', gi);
-  for (let gi = 0; gi < SEMI_GROUPS;  gi++) sortAndHighlight('semi', gi);
-  if (state.champion) setTimeout(() => showWinner(state.champion), 300);
+  for(let gi=0;gi<QUAL_GROUPS;gi++) sortBySpoons('qualifier',gi);
+  for(let gi=0;gi<SEMI_GROUPS;gi++) sortBySpoons('semi',gi);
+  sortFinalBySpoons();
+  if(state.champion) setTimeout(()=>showWinner(state.champion),300);
 }
 
 init();
