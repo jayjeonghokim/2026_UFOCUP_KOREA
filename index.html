@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026 UFO CUP KOREA</title>
+  <style>
+    /* ───── Reset & Base ───── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a1a;
+      --surface: #0f1130;
+      --surface2: #141840;
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --gold: #fbbf24;
+      --silver: #94a3b8;
+      --bronze: #b45309;
+      --green: #10b981;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --text-dim: #64748b;
+      --border: #1e2a5e;
+      --glow: 0 0 20px rgba(0,212,255,0.3);
+      --glow-gold: 0 0 25px rgba(251,191,36,0.5);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ───── Starfield Background ───── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 10%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 40%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 30%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 20% 90%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 50%, rgba(255,255,255,0.2) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ───── Header ───── */
+    header {
+      text-align: center;
+      padding: 32px 20px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ufo-icon {
+      font-size: 3rem;
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px var(--accent));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-weight: 900;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      margin: 8px 0 4px;
+    }
+
+    header p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+    }
+
+    /* ───── Main Layout ───── */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr 220px;
+      gap: 16px;
+      padding: 0 16px 40px;
+      position: relative;
+      z-index: 2;
+      align-items: start;
+    }
+
+    /* ───── Timer Panel ───── */
+    .timer-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 16px;
+      position: sticky;
+      top: 20px;
+    }
+
+    .timer-panel.left { border-color: rgba(0,212,255,0.3); }
+    .timer-panel.right { border-color: rgba(251,191,36,0.4); }
+
+    .timer-label {
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .timer-panel.left .timer-label { color: var(--accent); }
+    .timer-panel.right .timer-label { color: var(--gold); }
+
+    .timer-name {
+      font-size: 1rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .timer-display {
+      font-size: 2.6rem;
+      font-weight: 900;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+      transition: color 0.3s;
+    }
+
+    .timer-panel.left .timer-display { color: var(--accent); text-shadow: var(--glow); }
+    .timer-panel.right .timer-display { color: var(--gold); text-shadow: var(--glow-gold); }
+
+    .timer-display.warning { color: var(--red) !important; animation: pulse-red 0.5s ease infinite alternate; }
+
+    @keyframes pulse-red {
+      from { opacity: 1; }
+      to { opacity: 0.5; }
+    }
+
+    .timer-progress {
+      width: 100%;
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 3px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .timer-progress-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1s linear;
+    }
+
+    .timer-panel.left .timer-progress-bar { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+    .timer-panel.right .timer-progress-bar { background: linear-gradient(90deg, var(--bronze), var(--gold)); }
+
+    .timer-btn {
+      display: block;
+      width: 100%;
+      padding: 9px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, var(--accent2), #4c1d95);
+      color: white;
+    }
+
+    .btn-start:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(124,58,237,0.4); }
+
+    .btn-toggle {
+      background: var(--surface2);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+    }
+
+    .btn-toggle:hover { background: var(--border); color: var(--text); }
+    .btn-toggle.active { background: linear-gradient(135deg, #065f46, #047857); color: #6ee7b7; border-color: var(--green); }
+
+    .btn-reset {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+    }
+
+    .btn-reset:hover { color: var(--red); border-color: var(--red); }
+
+    /* ───── Tournament Container ───── */
+    .tournament-container { min-width: 0; }
+
+    /* ───── Section Header ───── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0 14px;
+    }
+
+    .section-header h2 {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+    }
+
+    .badge-qualifier { background: rgba(0,212,255,0.15); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+    .badge-semi { background: rgba(124,58,237,0.2); color: #a78bfa; border: 1px solid rgba(124,58,237,0.4); }
+    .badge-final { background: rgba(251,191,36,0.15); color: var(--gold); border: 1px solid rgba(251,191,36,0.4); }
+
+    /* ───── Qualifier Grid ───── */
+    .qualifier-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    /* ───── Group Card ───── */
+    .group-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .group-card:hover { border-color: rgba(0,212,255,0.2); }
+
+    .group-header {
+      background: var(--surface2);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .group-title {
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--accent);
+    }
+
+    .group-status {
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+      background: rgba(100,116,139,0.2);
+      color: var(--text-dim);
+      border: 1px solid rgba(100,116,139,0.3);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .group-status.done {
+      background: rgba(16,185,129,0.2);
+      color: var(--green);
+      border-color: rgba(16,185,129,0.4);
+    }
+
+    .player-list { padding: 8px; }
+
+    /* ───── Player Row ───── */
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 6px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      transition: all 0.25s;
+      cursor: default;
+    }
+
+    .player-row:last-child { margin-bottom: 0; }
+
+    .player-rank {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      background: var(--surface2);
+      color: var(--text-dim);
+    }
+
+    .player-name-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 0.88rem;
+      font-weight: 600;
+      outline: none;
+      cursor: text;
+      min-width: 0;
+    }
+
+    .player-name-input::placeholder { color: var(--text-dim); font-weight: 400; }
+    .player-name-input:focus { color: white; }
+
+    .player-score {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .score-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .score-btn:hover { background: var(--border); color: white; }
+    .score-btn.plus:hover { background: rgba(16,185,129,0.3); color: var(--green); border-color: var(--green); }
+    .score-btn.minus:hover { background: rgba(239,68,68,0.3); color: var(--red); border-color: var(--red); }
+
+    .score-val {
+      min-width: 24px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    .promote-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      border: 1px solid rgba(251,191,36,0.3);
+      background: rgba(251,191,36,0.1);
+      color: var(--gold);
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .promote-btn:hover { background: rgba(251,191,36,0.25); box-shadow: 0 0 8px rgba(251,191,36,0.3); }
+
+    /* Player state styles */
+    .player-row.rank-1st {
+      background: rgba(251,191,36,0.12);
+      border: 1px solid rgba(251,191,36,0.3);
+    }
+
+    .player-row.rank-1st .player-rank {
+      background: var(--gold);
+      color: #1a1a0a;
+    }
+
+    .player-row.eliminated {
+      opacity: 0.35;
+    }
+
+    .player-row.advanced {
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.25);
+    }
+
+    .player-row.advanced .player-rank {
+      background: var(--green);
+      color: white;
+    }
+
+    /* ───── Advance Flow Arrow ───── */
+    .advance-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 0;
+      gap: 8px;
+      color: var(--text-dim);
+    }
+
+    .flow-arrow {
+      font-size: 1.5rem;
+      color: var(--accent);
+      animation: bounce-down 1.5s ease infinite;
+    }
+
+    @keyframes bounce-down {
+      0%, 100% { transform: translateY(0); opacity: 1; }
+      50% { transform: translateY(6px); opacity: 0.5; }
+    }
+
+    .flow-text {
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    /* ───── Semi-Final ───── */
+    .semi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .semi-card {
+      background: var(--surface);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .semi-header {
+      background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(79,70,229,0.2));
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .semi-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #a78bfa;
+    }
+
+    /* ───── Final Stage ───── */
+    .final-stage {
+      background: var(--surface);
+      border: 1px solid rgba(251,191,36,0.35);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(251,191,36,0.08);
+    }
+
+    .final-header {
+      background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(180,83,9,0.15));
+      padding: 14px 20px;
+      text-align: center;
+    }
+
+    .final-header h3 {
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, var(--gold), #fde68a, var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .final-players {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .final-player-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 12px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .final-player-card.champion {
+      background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(180,83,9,0.1));
+      border-color: rgba(251,191,36,0.6);
+      box-shadow: var(--glow-gold);
+    }
+
+    .final-player-medal {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .final-player-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+      min-height: 1.4em;
+    }
+
+    .final-player-origin {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .champion-btn {
+      margin-top: 10px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(251,191,36,0.4);
+      background: rgba(251,191,36,0.15);
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: none;
+    }
+
+    .champion-btn:hover {
+      background: rgba(251,191,36,0.3);
+      box-shadow: 0 0 12px rgba(251,191,36,0.3);
+    }
+
+    /* ───── Winner Display ───── */
+    .winner-banner {
+      display: none;
+      text-align: center;
+      padding: 30px 20px;
+      margin-top: 20px;
+      background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(124,58,237,0.1));
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      animation: glow-pulse 2s ease infinite;
+    }
+
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(251,191,36,0.3); }
+      50% { box-shadow: 0 0 60px rgba(251,191,36,0.6); }
+    }
+
+    .winner-banner.show { display: block; }
+
+    .winner-banner .trophy { font-size: 4rem; animation: spin-slow 4s linear infinite; }
+
+    @keyframes spin-slow {
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(360deg); }
+    }
+
+    .winner-banner h2 {
+      font-size: 1rem;
+      letter-spacing: 4px;
+      color: var(--gold);
+      margin: 12px 0 6px;
+    }
+
+    .winner-banner .winner-name {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--gold), #fde68a, var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ───── Confetti ───── */
+    .confetti-piece {
+      position: fixed;
+      width: 8px;
+      height: 14px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 9999;
+      animation: confetti-fall linear forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ───── Promote notification ───── */
+    .toast {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: linear-gradient(135deg, var(--surface2), var(--surface));
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap;
+      box-shadow: var(--glow);
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ───── Scrollbar ───── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ───── Responsive ───── */
+    @media (max-width: 960px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .timer-panel { position: static; }
+      .qualifier-grid { grid-template-columns: repeat(2, 1fr); }
+      .semi-grid { grid-template-columns: repeat(2, 1fr); }
+      .final-players { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .qualifier-grid { grid-template-columns: 1fr; }
+      .semi-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ───── Divider ───── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="ufo-icon">🛸</div>
+  <h1>2026 UFO CUP KOREA</h1>
+  <p>TOURNAMENT BRACKET · 36 PLAYERS · 9 GROUPS</p>
+</header>
+
+<div id="toast" class="toast"></div>
+
+<div class="main-layout">
+
+  <!-- ─── LEFT TIMER: 준비 ─── -->
+  <aside class="timer-panel left">
+    <div class="timer-label">⬛ TIMER 1</div>
+    <div class="timer-name" style="color:var(--accent)">준비 시간</div>
+    <div class="timer-display" id="prep-display">05:00</div>
+    <div class="timer-progress">
+      <div class="timer-progress-bar" id="prep-bar" style="width:100%"></div>
+    </div>
+    <button class="timer-btn btn-start" onclick="timerStart('prep')">▶ 타이머 시작</button>
+    <button class="timer-btn btn-toggle" id="prep-toggle" onclick="timerToggle('prep')">⏸ 일시중지</button>
+    <button class="timer-btn btn-reset" onclick="timerReset('prep')">↺ 리셋</button>
+  </aside>
+
+  <!-- ─── CENTER: Tournament ─── -->
+  <main class="tournament-container">
+
+    <!-- QUALIFIER -->
+    <div class="section-header">
+      <h2 style="color:var(--accent)">⚡ 예선 라운드</h2>
+      <span class="badge badge-qualifier">QUALIFIER</span>
+      <div class="section-line"></div>
+      <span style="font-size:0.75rem;color:var(--text-dim);">각 조 1위 본선 진출</span>
+    </div>
+
+    <div class="qualifier-grid" id="qualifier-grid"></div>
+
+    <!-- FLOW -->
+    <div class="advance-flow">
+      <div class="flow-arrow">↓</div>
+      <div class="flow-text">9개조 1위 → 본선 진출</div>
+      <div class="flow-arrow">↓</div>
+    </div>
+
+    <!-- SEMI-FINAL -->
+    <div class="section-header">
+      <h2 style="color:#a78bfa">🏆 본선 라운드</h2>
+      <span class="badge badge-semi">SEMI-FINAL</span>
+      <div class="section-line"></div>
+      <span style="font-size:0.75rem;color:var(--text-dim);">3조 각 1위 → 결선 진출</span>
+    </div>
+
+    <div class="semi-grid" id="semi-grid"></div>
+
+    <!-- FLOW -->
+    <div class="advance-flow">
+      <div class="flow-arrow" style="color:var(--gold)">↓</div>
+      <div class="flow-text" style="color:var(--gold)">3개조 1위 → 최종 결선</div>
+      <div class="flow-arrow" style="color:var(--gold)">↓</div>
+    </div>
+
+    <!-- FINAL -->
+    <div class="section-header">
+      <h2 style="color:var(--gold)">👑 최종 결선</h2>
+      <span class="badge badge-final">GRAND FINAL</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="final-stage">
+      <div class="final-header">
+        <h3>★ GRAND FINAL ★</h3>
+      </div>
+      <div class="final-players" id="final-players">
+        <!-- generated by JS -->
+      </div>
+    </div>
+
+    <!-- WINNER BANNER -->
+    <div class="winner-banner" id="winner-banner">
+      <div class="trophy">🏆</div>
+      <h2>2026 UFO CUP KOREA</h2>
+      <div style="color:var(--text-dim);font-size:0.85rem;letter-spacing:3px;margin-bottom:12px;">CHAMPION</div>
+      <div class="winner-name" id="winner-name"></div>
+    </div>
+
+  </main>
+
+  <!-- ─── RIGHT TIMER: 추출 ─── -->
+  <aside class="timer-panel right">
+    <div class="timer-label" style="color:var(--gold)">⬛ TIMER 2</div>
+    <div class="timer-name" style="color:var(--gold)">추출 시간</div>
+    <div class="timer-display" id="extract-display" style="color:var(--gold)">07:00</div>
+    <div class="timer-progress">
+      <div class="timer-progress-bar" id="extract-bar" style="width:100%"></div>
+    </div>
+    <button class="timer-btn btn-start" onclick="timerStart('extract')" style="background:linear-gradient(135deg,#92400e,#78350f)">▶ 타이머 시작</button>
+    <button class="timer-btn btn-toggle" id="extract-toggle" onclick="timerToggle('extract')">⏸ 일시중지</button>
+    <button class="timer-btn btn-reset" onclick="timerReset('extract')">↺ 리셋</button>
+  </aside>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const QUAL_GROUPS = 9;
+const QUAL_PER_GROUP = 4;
+const SEMI_GROUPS = 3;
+const SEMI_PER_GROUP = 3;
+
+// State
+const state = {
+  qualifier: Array.from({length: QUAL_GROUPS}, (_, gi) => ({
+    done: false,
+    players: Array.from({length: QUAL_PER_GROUP}, (_, pi) => ({
+      name: '',
+      score: 0,
+      advanced: false,
+      eliminated: false,
+    }))
+  })),
+  semi: Array.from({length: SEMI_GROUPS}, (_, gi) => ({
+    done: false,
+    players: Array.from({length: SEMI_PER_GROUP}, (_, pi) => ({
+      name: '',
+      score: 0,
+      advanced: false,
+      eliminated: false,
+      from: null, // "Q그룹번호"
+    }))
+  })),
+  final: Array.from({length: 3}, (_, i) => ({
+    name: '',
+    score: 0,
+    champion: false,
+    from: null,
+  })),
+  champion: null,
+};
+
+/* ═══════════════════════════════════════════
+   RENDER QUALIFIER
+═══════════════════════════════════════════ */
+function renderQualifier() {
+  const grid = document.getElementById('qualifier-grid');
+  grid.innerHTML = '';
+
+  state.qualifier.forEach((group, gi) => {
+    const card = document.createElement('div');
+    card.className = 'group-card';
+    card.id = `q-card-${gi}`;
+
+    const header = document.createElement('div');
+    header.className = 'group-header';
+    header.innerHTML = `
+      <span class="group-title">예선 ${gi + 1}조</span>
+      <span class="group-status ${group.done ? 'done' : ''}" id="q-status-${gi}"
+            onclick="toggleGroupDone('qualifier', ${gi})" title="클릭하여 완료 처리">
+        ${group.done ? '✔ 완료' : '진행중'}
+      </span>
+    `;
+
+    const list = document.createElement('div');
+    list.className = 'player-list';
+
+    group.players.forEach((player, pi) => {
+      const row = buildPlayerRow('qualifier', gi, pi, player);
+      list.appendChild(row);
+    });
+
+    card.appendChild(header);
+    card.appendChild(list);
+    grid.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   RENDER SEMI
+═══════════════════════════════════════════ */
+function renderSemi() {
+  const grid = document.getElementById('semi-grid');
+  grid.innerHTML = '';
+
+  state.semi.forEach((group, gi) => {
+    const card = document.createElement('div');
+    card.className = 'semi-card';
+    card.id = `s-card-${gi}`;
+
+    const header = document.createElement('div');
+    header.className = 'semi-header';
+    header.innerHTML = `
+      <span class="semi-title">본선 ${gi + 1}조</span>
+      <span class="group-status ${group.done ? 'done' : ''}" id="s-status-${gi}"
+            onclick="toggleGroupDone('semi', ${gi})" title="클릭하여 완료 처리">
+        ${group.done ? '✔ 완료' : '진행중'}
+      </span>
+    `;
+
+    const list = document.createElement('div');
+    list.className = 'player-list';
+
+    group.players.forEach((player, pi) => {
+      const row = buildPlayerRow('semi', gi, pi, player);
+      list.appendChild(row);
+    });
+
+    card.appendChild(header);
+    card.appendChild(list);
+    grid.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   RENDER FINAL
+═══════════════════════════════════════════ */
+function renderFinal() {
+  const container = document.getElementById('final-players');
+  container.innerHTML = '';
+
+  const medals = ['🥇', '🥈', '🥉'];
+  const labels = ['결선 진출자 1', '결선 진출자 2', '결선 진출자 3'];
+
+  state.final.forEach((player, i) => {
+    const card = document.createElement('div');
+    card.className = `final-player-card${player.champion ? ' champion' : ''}`;
+    card.id = `f-card-${i}`;
+
+    const fromLabel = player.from ? `<div class="final-player-origin">← ${player.from}</div>` : `<div class="final-player-origin">${labels[i]}</div>`;
+
+    card.innerHTML = `
+      <div class="final-player-medal">${player.champion ? '🏆' : medals[i]}</div>
+      <div class="final-player-name">${player.name || '—'}</div>
+      ${fromLabel}
+      <div class="player-score" style="justify-content:center;margin-top:10px;">
+        <button class="score-btn minus" onclick="adjustFinalScore(${i}, -1)">−</button>
+        <span class="score-val" id="f-score-${i}">${player.score}</span>
+        <button class="score-btn plus" onclick="adjustFinalScore(${i}, 1)">+</button>
+      </div>
+      <button class="champion-btn" id="f-champ-btn-${i}" onclick="setChampion(${i})">👑 우승</button>
+    `;
+
+    // show champion button only if player has name
+    if (player.name) {
+      card.querySelector('.champion-btn').style.display = 'inline-block';
+    }
+
+    container.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   BUILD PLAYER ROW
+═══════════════════════════════════════════ */
+function buildPlayerRow(stage, gi, pi, player) {
+  const row = document.createElement('div');
+
+  let cls = 'player-row';
+  if (player.advanced) cls += ' advanced';
+  else if (player.eliminated) cls += ' eliminated';
+  else if (pi === 0 && !player.advanced) {
+    // rank 1st highlight only when name exists and not advanced yet
+  }
+  row.className = cls;
+  row.id = `${stage}-${gi}-${pi}`;
+
+  const rankEl = document.createElement('div');
+  rankEl.className = 'player-rank';
+  rankEl.textContent = pi + 1;
+
+  const nameInput = document.createElement('input');
+  nameInput.type = 'text';
+  nameInput.className = 'player-name-input';
+  nameInput.placeholder = `선수 ${pi + 1}`;
+  nameInput.value = player.name;
+  nameInput.maxLength = 12;
+  nameInput.addEventListener('input', e => {
+    if (stage === 'qualifier') state.qualifier[gi].players[pi].name = e.target.value;
+    else state.semi[gi].players[pi].name = e.target.value;
+    saveState();
+  });
+
+  const scoreDiv = document.createElement('div');
+  scoreDiv.className = 'player-score';
+
+  const minusBtn = document.createElement('button');
+  minusBtn.className = 'score-btn minus';
+  minusBtn.textContent = '−';
+  minusBtn.onclick = () => adjustScore(stage, gi, pi, -1);
+
+  const scoreVal = document.createElement('span');
+  scoreVal.className = 'score-val';
+  scoreVal.id = `score-${stage}-${gi}-${pi}`;
+  scoreVal.textContent = player.score;
+
+  const plusBtn = document.createElement('button');
+  plusBtn.className = 'score-btn plus';
+  plusBtn.textContent = '+';
+  plusBtn.onclick = () => adjustScore(stage, gi, pi, 1);
+
+  scoreDiv.appendChild(minusBtn);
+  scoreDiv.appendChild(scoreVal);
+  scoreDiv.appendChild(plusBtn);
+
+  // Promote button (only for rank 0)
+  const promoteBtn = document.createElement('button');
+  promoteBtn.className = 'promote-btn';
+  promoteBtn.title = '본선/결선 진출';
+  promoteBtn.textContent = '↑';
+  promoteBtn.style.visibility = pi === 0 ? 'visible' : 'hidden';
+  if (player.advanced) {
+    promoteBtn.style.background = 'rgba(16,185,129,0.3)';
+    promoteBtn.style.color = '#6ee7b7';
+  }
+  promoteBtn.onclick = () => promotePlayer(stage, gi, pi);
+
+  row.appendChild(rankEl);
+  row.appendChild(nameInput);
+  row.appendChild(scoreDiv);
+  row.appendChild(promoteBtn);
+
+  return row;
+}
+
+/* ═══════════════════════════════════════════
+   SCORE ADJUST
+═══════════════════════════════════════════ */
+function adjustScore(stage, gi, pi, delta) {
+  const s = stage === 'qualifier' ? state.qualifier[gi] : state.semi[gi];
+  s.players[pi].score = Math.max(0, s.players[pi].score + delta);
+  document.getElementById(`score-${stage}-${gi}-${pi}`).textContent = s.players[pi].score;
+
+  // Sort rows by score visually
+  sortAndHighlight(stage, gi);
+  saveState();
+}
+
+function adjustFinalScore(i, delta) {
+  state.final[i].score = Math.max(0, state.final[i].score + delta);
+  document.getElementById(`f-score-${i}`).textContent = state.final[i].score;
+  saveState();
+}
+
+/* ═══════════════════════════════════════════
+   SORT & HIGHLIGHT by score
+═══════════════════════════════════════════ */
+function sortAndHighlight(stage, gi) {
+  const grp = stage === 'qualifier' ? state.qualifier[gi] : state.semi[gi];
+  const players = grp.players;
+
+  // Sort indices by score desc
+  const sorted = [...players.map((p,i) => ({p, i}))].sort((a,b) => b.p.score - a.p.score);
+
+  sorted.forEach(({p, i}, rank) => {
+    const row = document.getElementById(`${stage}-${gi}-${i}`);
+    if (!row) return;
+    row.className = 'player-row';
+    if (p.advanced) {
+      row.className += ' advanced';
+    } else if (p.eliminated) {
+      row.className += ' eliminated';
+    } else if (rank === 0 && p.name) {
+      row.className += ' rank-1st';
+    }
+    // Update rank number
+    const rankEl = row.querySelector('.player-rank');
+    if (rankEl) rankEl.textContent = rank + 1;
+  });
+}
+
+/* ═══════════════════════════════════════════
+   TOGGLE GROUP DONE
+═══════════════════════════════════════════ */
+function toggleGroupDone(stage, gi) {
+  if (stage === 'qualifier') {
+    state.qualifier[gi].done = !state.qualifier[gi].done;
+  } else {
+    state.semi[gi].done = !state.semi[gi].done;
+  }
+  const prefix = stage === 'qualifier' ? 'q' : 's';
+  const el = document.getElementById(`${prefix}-status-${gi}`);
+  const done = stage === 'qualifier' ? state.qualifier[gi].done : state.semi[gi].done;
+  el.textContent = done ? '✔ 완료' : '진행중';
+  el.className = `group-status${done ? ' done' : ''}`;
+  saveState();
+}
+
+/* ═══════════════════════════════════════════
+   PROMOTE PLAYER
+═══════════════════════════════════════════ */
+function promotePlayer(stage, gi, pi) {
+  if (stage === 'qualifier') {
+    const player = state.qualifier[gi].players[pi];
+    if (!player.name) { showToast('선수 이름을 먼저 입력해주세요.'); return; }
+
+    // Find next empty slot in semi
+    const semiGroupIdx = Math.floor(gi / 3); // Q0-2→S0, Q3-5→S1, Q6-8→S2
+    const semiGroup = state.semi[semiGroupIdx];
+    const emptySlot = semiGroup.players.findIndex(p => !p.name);
+
+    if (emptySlot === -1) {
+      showToast(`본선 ${semiGroupIdx + 1}조가 이미 가득 찼습니다.`);
+      return;
+    }
+
+    // Mark as advanced in qualifier
+    player.advanced = true;
+    // Mark others as eliminated
+    state.qualifier[gi].players.forEach((p, i) => {
+      if (i !== pi) p.eliminated = true;
+    });
+
+    // Place in semi
+    semiGroup.players[emptySlot].name = player.name;
+    semiGroup.players[emptySlot].from = `예선 ${gi + 1}조 1위`;
+
+    state.qualifier[gi].done = true;
+    renderQualifier();
+    renderSemi();
+    saveState();
+    showToast(`🎉 ${player.name} → 본선 ${semiGroupIdx + 1}조 진출!`);
+
+  } else if (stage === 'semi') {
+    const player = state.semi[gi].players[pi];
+    if (!player.name) { showToast('선수 이름을 먼저 입력해주세요.'); return; }
+
+    const emptySlot = state.final.findIndex(p => !p.name);
+    if (emptySlot === -1) { showToast('결선 자리가 모두 찼습니다.'); return; }
+
+    // Mark advanced/eliminated
+    player.advanced = true;
+    state.semi[gi].players.forEach((p, i) => {
+      if (i !== pi) p.eliminated = true;
+    });
+
+    state.final[emptySlot].name = player.name;
+    state.final[emptySlot].from = `본선 ${gi + 1}조 1위`;
+    state.semi[gi].done = true;
+
+    renderSemi();
+    renderFinal();
+    saveState();
+    showToast(`🏆 ${player.name} → 최종 결선 진출!`);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SET CHAMPION
+═══════════════════════════════════════════ */
+function setChampion(i) {
+  const player = state.final[i];
+  if (!player.name) return;
+
+  state.final.forEach((p, idx) => p.champion = idx === i);
+  state.champion = player.name;
+
+  renderFinal();
+  showWinner(player.name);
+  saveState();
+}
+
+function showWinner(name) {
+  const banner = document.getElementById('winner-banner');
+  document.getElementById('winner-name').textContent = name;
+  banner.classList.add('show');
+  banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  spawnConfetti();
+}
+
+/* ═══════════════════════════════════════════
+   CONFETTI
+═══════════════════════════════════════════ */
+function spawnConfetti() {
+  const colors = ['#fbbf24','#00d4ff','#7c3aed','#10b981','#ef4444','#f472b6'];
+  for (let i = 0; i < 80; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.top = '-20px';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.animationDuration = (2 + Math.random() * 2) + 's';
+      el.style.animationDelay = (Math.random() * 0.5) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 5000);
+    }, i * 30);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ═══════════════════════════════════════════
+   TIMERS
+═══════════════════════════════════════════ */
+const timers = {
+  prep: {
+    total: 5 * 60,
+    remaining: 5 * 60,
+    interval: null,
+    running: false,
+  },
+  extract: {
+    total: 7 * 60,
+    remaining: 7 * 60,
+    interval: null,
+    running: false,
+  },
+};
+
+function timerStart(id) {
+  const t = timers[id];
+  if (t.running) return;
+  if (t.remaining <= 0) timerReset(id);
+  t.running = true;
+  const toggleBtn = document.getElementById(`${id}-toggle`);
+  toggleBtn.textContent = '⏸ 일시중지';
+  toggleBtn.classList.add('active');
+  t.interval = setInterval(() => tickTimer(id), 1000);
+}
+
+function timerToggle(id) {
+  const t = timers[id];
+  const toggleBtn = document.getElementById(`${id}-toggle`);
+  if (t.running) {
+    clearInterval(t.interval);
+    t.running = false;
+    toggleBtn.textContent = '▶ 재개';
+    toggleBtn.classList.remove('active');
+  } else {
+    if (t.remaining <= 0) return;
+    t.running = true;
+    toggleBtn.textContent = '⏸ 일시중지';
+    toggleBtn.classList.add('active');
+    t.interval = setInterval(() => tickTimer(id), 1000);
+  }
+}
+
+function timerReset(id) {
+  const t = timers[id];
+  clearInterval(t.interval);
+  t.running = false;
+  t.remaining = t.total;
+  const toggleBtn = document.getElementById(`${id}-toggle`);
+  toggleBtn.textContent = '⏸ 일시중지';
+  toggleBtn.classList.remove('active');
+  updateTimerDisplay(id);
+}
+
+function tickTimer(id) {
+  const t = timers[id];
+  if (t.remaining > 0) {
+    t.remaining--;
+    updateTimerDisplay(id);
+  } else {
+    clearInterval(t.interval);
+    t.running = false;
+    const toggleBtn = document.getElementById(`${id}-toggle`);
+    toggleBtn.textContent = '⏸ 일시중지';
+    toggleBtn.classList.remove('active');
+    // Alarm
+    document.getElementById(`${id}-display`).classList.add('warning');
+    showToast(id === 'prep' ? '⏰ 준비 시간 종료!' : '⏰ 추출 시간 종료!');
+    try { new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAA...').play(); } catch(e) {}
+  }
+}
+
+function updateTimerDisplay(id) {
+  const t = timers[id];
+  const m = String(Math.floor(t.remaining / 60)).padStart(2, '0');
+  const s = String(t.remaining % 60).padStart(2, '0');
+  const display = document.getElementById(`${id}-display`);
+  display.textContent = `${m}:${s}`;
+
+  const pct = (t.remaining / t.total) * 100;
+  document.getElementById(`${id}-bar`).style.width = pct + '%';
+
+  // Warning color
+  if (t.remaining <= 30 && t.remaining > 0) {
+    display.classList.add('warning');
+  } else {
+    display.classList.remove('warning');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   LOCAL STORAGE
+═══════════════════════════════════════════ */
+function saveState() {
+  try {
+    localStorage.setItem('ufo2026_state', JSON.stringify({
+      qualifier: state.qualifier,
+      semi: state.semi,
+      final: state.final,
+      champion: state.champion,
+    }));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('ufo2026_state');
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved.qualifier) state.qualifier = saved.qualifier;
+    if (saved.semi) state.semi = saved.semi;
+    if (saved.final) state.final = saved.final;
+    if (saved.champion) state.champion = saved.champion;
+  } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+function init() {
+  loadState();
+  renderQualifier();
+  renderSemi();
+  renderFinal();
+
+  // Re-apply score highlights
+  for (let gi = 0; gi < QUAL_GROUPS; gi++) sortAndHighlight('qualifier', gi);
+  for (let gi = 0; gi < SEMI_GROUPS; gi++) sortAndHighlight('semi', gi);
+
+  if (state.champion) {
+    setTimeout(() => showWinner(state.champion), 300);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
