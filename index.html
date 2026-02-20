@@ -108,6 +108,38 @@
     .badge-semi      { background:rgba(124,58,237,0.2); color:#a78bfa;       border:1px solid rgba(124,58,237,0.4); }
     .badge-final     { background:rgba(251,191,36,0.15); color:var(--gold);   border:1px solid rgba(251,191,36,0.4); }
 
+    /* ── 섹션 잠금 버튼 ── */
+    .section-lock-btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:26px; height:26px; border-radius:7px; border:1px solid var(--border);
+      background:var(--surface2); cursor:pointer; font-size:0.9rem;
+      transition:all 0.2s; flex-shrink:0;
+      padding:0; line-height:1;
+    }
+    .section-lock-btn:hover { border-color:var(--gold); background:rgba(251,191,36,0.1); }
+    .section-lock-btn.locked { border-color:rgba(239,68,68,0.6); background:rgba(239,68,68,0.12); }
+    .section-lock-btn.locked:hover { border-color:var(--red); background:rgba(239,68,68,0.22); }
+    .section-reset-btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:26px; height:26px; border-radius:7px; border:1px solid var(--border);
+      background:var(--surface2); cursor:pointer; font-size:0.85rem;
+      transition:all 0.2s; flex-shrink:0; padding:0; line-height:1;
+    }
+    .section-reset-btn:hover { border-color:var(--accent); background:rgba(0,212,255,0.1); color:var(--accent); }
+
+    /* ── 잠금 오버레이 ── */
+    .lock-overlay {
+      display:none; position:absolute; inset:0; z-index:50;
+      background:rgba(10,10,26,0.72); backdrop-filter:blur(3px);
+      border-radius:inherit; align-items:center; justify-content:center;
+      flex-direction:column; gap:8px;
+    }
+    .lock-overlay.active { display:flex; }
+    .lock-overlay-icon { font-size:2.2rem; }
+    .lock-overlay-text { font-size:0.72rem; color:var(--text-dim); letter-spacing:2px; }
+    /* 잠금 대상 래퍼 */
+    .lockable-section { position:relative; }
+
     /* ── Qualifier / Semi Grid ── */
     .qualifier-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
     .semi-grid      { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
@@ -531,8 +563,16 @@
       <span class="badge badge-qualifier">QUALIFIER</span>
       <div class="section-line"></div>
       <span style="font-size:0.72rem;color:var(--text-dim)">수저 최다자 → 진출 버튼</span>
+      <button class="section-lock-btn" id="lock-qualifier" title="잠금/해제" onclick="toggleSectionLock('qualifier')">🔓</button>
+      <button class="section-reset-btn" id="reset-qualifier" title="예선 초기화" onclick="resetSection('qualifier')">🔄</button>
     </div>
-    <div class="qualifier-grid" id="qualifier-grid"></div>
+    <div class="lockable-section" id="wrap-qualifier">
+      <div class="qualifier-grid" id="qualifier-grid"></div>
+      <div class="lock-overlay" id="overlay-qualifier">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">LOCKED</div>
+      </div>
+    </div>
 
     <!-- ░░ FINALISTS ░░ -->
     <div class="advance-flow">
@@ -562,8 +602,15 @@
       <span class="badge badge-semi">SEMI-FINAL</span>
       <div class="section-line"></div>
       <span style="font-size:0.72rem;color:var(--text-dim)">수저 최다자 → 진출 버튼</span>
+      <button class="section-lock-btn" id="lock-semi" title="잠금/해제" onclick="toggleSectionLock('semi')">🔓</button>
     </div>
-    <div class="semi-grid" id="semi-grid"></div>
+    <div class="lockable-section" id="wrap-semi">
+      <div class="semi-grid" id="semi-grid"></div>
+      <div class="lock-overlay" id="overlay-semi">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">LOCKED</div>
+      </div>
+    </div>
 
     <div class="advance-flow">
       <div class="flow-arrow" style="color:var(--gold)">↓</div>
@@ -576,10 +623,17 @@
       <h2 style="color:var(--gold)">👑 최종 결선</h2>
       <span class="badge badge-final">GRAND FINAL</span>
       <div class="section-line"></div>
+      <button class="section-lock-btn" id="lock-final" title="잠금/해제" onclick="toggleSectionLock('final')">🔓</button>
     </div>
-    <div class="final-stage">
-      <div class="final-header"><h3>★ GRAND FINAL ★</h3></div>
-      <div class="final-players" id="final-players"></div>
+    <div class="lockable-section" id="wrap-final">
+      <div class="final-stage">
+        <div class="final-header"><h3>★ GRAND FINAL ★</h3></div>
+        <div class="final-players" id="final-players"></div>
+      </div>
+      <div class="lock-overlay" id="overlay-final">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">LOCKED</div>
+      </div>
     </div>
 
     <div class="winner-banner" id="winner-banner">
@@ -1311,6 +1365,94 @@ function loadState(){
     if(s.final)     state.final=s.final;
     if(s.champion)  state.champion=s.champion;
   } catch(e){}
+}
+
+/* ══════════════════════════════════════════
+   SECTION LOCK
+══════════════════════════════════════════ */
+const LOCK_PW   = 'JAYUFOJAY2';
+const lockState = { qualifier: false, semi: false, final: false };
+
+function toggleSectionLock(section) {
+  if (lockState[section]) {
+    // 잠금 해제: 비밀번호 확인
+    const pw = prompt('🔒 잠금 해제 비밀번호를 입력하세요:');
+    if (pw === null) return;                         // 취소
+    if (pw !== LOCK_PW) {
+      showToast('❌ 비밀번호가 틀렸습니다.');
+      return;
+    }
+    lockState[section] = false;
+    applySectionLock(section);
+    showToast('🔓 잠금이 해제되었습니다.');
+  } else {
+    // 잠금 설정: 확인만
+    if (!confirm(`'${sectionLabel(section)}' 섹션을 잠그시겠습니까?\n해제 시 비밀번호가 필요합니다.`)) return;
+    lockState[section] = true;
+    applySectionLock(section);
+    showToast('🔒 섹션이 잠금되었습니다.');
+  }
+}
+
+function applySectionLock(section) {
+  const overlay = document.getElementById(`overlay-${section}`);
+  const lockBtn = document.getElementById(`lock-${section}`);
+  const resetBtn = document.getElementById(`reset-${section}`); // qualifier만 있음
+
+  if (lockState[section]) {
+    overlay && overlay.classList.add('active');
+    lockBtn  && (lockBtn.textContent = '🔒');
+    lockBtn  && lockBtn.classList.add('locked');
+    resetBtn && (resetBtn.disabled = true);
+  } else {
+    overlay && overlay.classList.remove('active');
+    lockBtn  && (lockBtn.textContent = '🔓');
+    lockBtn  && lockBtn.classList.remove('locked');
+    resetBtn && (resetBtn.disabled = false);
+  }
+}
+
+function sectionLabel(section) {
+  return { qualifier:'예선 라운드', semi:'본선 라운드', final:'최종 결선' }[section] || section;
+}
+
+/* ── 예선 새로고침(초기화) ── */
+function resetSection(section) {
+  if (lockState[section]) { showToast('🔒 잠금 해제 후 초기화하세요.'); return; }
+  if (section !== 'qualifier') return;
+
+  if (!confirm('⚠️ 예선 전체를 초기화하면\n본선·결선 데이터도 모두 삭제됩니다.\n계속하시겠습니까?')) return;
+
+  // 비밀번호 확인
+  const pw = prompt('초기화 확인: 비밀번호를 입력하세요.');
+  if (pw === null) return;
+  if (pw !== LOCK_PW) { showToast('❌ 비밀번호가 틀렸습니다.'); return; }
+
+  // 전체 state 초기화
+  state.qualifier.forEach(g => {
+    g.done = false;
+    g.players.forEach(p => { p.spoons=0; p.advanced=false; p.eliminated=false; p.editing=false; });
+  });
+  state.finalists = Array.from({length:9}, ()=>({ name:'', from:'' }));
+  state.shuffled  = false;
+  state.semi.forEach(g => {
+    g.done = false;
+    g.players.forEach(p => { p.name=''; p.spoons=0; p.advanced=false; p.eliminated=false; p.from=''; p.editing=false; });
+  });
+  state.final   = Array.from({length:3}, ()=>({ name:'', spoons:0, champion:false, from:'' }));
+  state.champion = null;
+
+  // 잠금 해제
+  ['qualifier','semi','final'].forEach(s => { lockState[s]=false; applySectionLock(s); });
+
+  renderQualifier();
+  renderFinalists();
+  renderSemi();
+  renderFinal();
+  for(let gi=0;gi<QUAL_GROUPS;gi++) sortBySpoons('qualifier',gi);
+  document.getElementById('winner-banner').classList.remove('show');
+  saveState();
+  showToast('🔄 전체 초기화 완료!');
 }
 
 /* ══════════════════════════════════════════
