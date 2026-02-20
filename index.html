@@ -447,14 +447,27 @@
       -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
     }
 
-    /* ── Confetti ── */
+    /* ── Confetti — 전체화면 폭죽 ── */
     .confetti-piece {
-      position:fixed; width:8px; height:14px; border-radius:2px;
-      pointer-events:none; z-index:9999; animation:confetti-fall linear forwards;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      animation: confetti-fall linear forwards;
+      will-change: transform, opacity;
     }
     @keyframes confetti-fall {
-      0%  { transform:translateY(-20px) rotate(0deg);   opacity:1; }
-      100%{ transform:translateY(110vh)  rotate(720deg); opacity:0; }
+      0%   { transform: translateY(0) translateX(0) rotateX(0deg) rotateY(0deg); opacity: 1; }
+      60%  { opacity: 1; }
+      100% { transform: translateY(110vh) translateX(var(--dx,0)) rotateX(var(--rx,360deg)) rotateY(var(--ry,180deg)); opacity: 0; }
+    }
+
+    /* ── 우승 선언 전 번호 뱃지 ── */
+    .final-num-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2rem; height: 2rem; border-radius: 50%;
+      background: linear-gradient(135deg, var(--surface2), #1e2a5e);
+      border: 2px solid var(--border);
+      color: var(--text-dim); font-size: 1rem; font-weight: 900;
     }
 
     /* ── Toast ── */
@@ -756,20 +769,42 @@ function renderFinalists() {
 function renderFinal() {
   const container = document.getElementById('final-players');
   container.innerHTML = '';
-  const medals = ['🥇','🥈','🥉'];
-  const labels  = ['결선 진출자 1','결선 진출자 2','결선 진출자 3'];
 
-  // 최고 수저 수
+  // 우승 선언이 완료된 상태인지 확인
+  const decided = state.final.some(p => p.champion);
+
+  // 우승 선언 후: 수저 순 정렬 → 1위=🥇 2위=🥈 3위=🥉
+  // 우승 선언 전: 번호만 표기
+  const postMedals = ['🥇','🥈','🥉'];
+  const labels     = ['결선 진출자 1','결선 진출자 2','결선 진출자 3'];
+
+  // 최고 수저 수 (rank-top 하이라이트용)
   const maxS = Math.max(...state.final.map(p => p.spoons));
 
+  // 우승 선언 후 정렬 순서 계산 (수저 많은 순)
+  const sortedIdx = decided
+    ? [...state.final.map((p,i)=>({p,i}))]
+        .sort((a,b) => b.p.spoons - a.p.spoons)
+        .map(x => x.i)
+    : null;
+
   state.final.forEach((player, i) => {
-    const isTop = player.spoons > 0 && player.spoons === maxS;
+    const isTop = !decided && player.spoons > 0 && player.spoons === maxS;
     const card  = document.createElement('div');
     let cardCls = 'final-player-card';
     if (player.champion) cardCls += ' champion';
     else if (isTop) cardCls += ' rank-top';
     card.className = cardCls;
     card.id = `f-card-${i}`;
+
+    // 메달/번호 결정
+    let medalIcon;
+    if (decided) {
+      const rank = sortedIdx.indexOf(i); // 0=1위, 1=2위, 2=3위
+      medalIcon = postMedals[rank] || '—';
+    } else {
+      medalIcon = `<span class="final-num-badge">${i+1}</span>`;
+    }
 
     let spoonHtml = '<div class="final-spoon-row">';
     for (let s = 0; s < MAX_SPOONS; s++) {
@@ -779,13 +814,16 @@ function renderFinal() {
     spoonHtml += '</div>';
 
     card.innerHTML = `
-      <div class="final-medal">${player.champion ? '🏆' : (isTop ? '✨' : medals[i])}</div>
+      <div class="final-medal">${medalIcon}</div>
       <div class="final-name">${player.name || '—'}</div>
       <div class="final-from">${player.from || labels[i]}</div>
       ${spoonHtml}
       <button class="champion-btn" id="f-champ-btn-${i}" onclick="setChampion(${i})">👑 우승 선언</button>
     `;
-    if (player.name) card.querySelector('.champion-btn').style.display = 'inline-block';
+    // 우승 선언 전이고 이름 있을 때만 버튼 표시
+    const btn = card.querySelector('.champion-btn');
+    if (player.name && !decided) btn.style.display = 'inline-block';
+    else btn.style.display = 'none';
     container.appendChild(card);
   });
 }
@@ -1114,20 +1152,61 @@ function showWinner(name) {
 }
 
 /* ══════════════════════════════════════════
-   CONFETTI
+   CONFETTI — 전체화면 폭죽
 ══════════════════════════════════════════ */
 function spawnConfetti() {
-  const colors=['#fbbf24','#00d4ff','#7c3aed','#10b981','#ef4444','#f472b6'];
-  for(let i=0;i<90;i++) setTimeout(()=>{
-    const el=document.createElement('div');
-    el.className='confetti-piece';
-    el.style.left=Math.random()*100+'vw';
-    el.style.background=colors[Math.floor(Math.random()*colors.length)];
-    el.style.animationDuration=(2+Math.random()*2)+'s';
-    el.style.animationDelay=(Math.random()*0.5)+'s';
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),5000);
-  },i*30);
+  const colors = ['#fbbf24','#f59e0b','#00d4ff','#7c3aed','#10b981','#ef4444','#f472b6','#34d399','#818cf8'];
+  const shapes = ['■','●','▲','★','♦','✦'];
+  const TOTAL   = 220;
+
+  for (let i = 0; i < TOTAL; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      // 다양한 크기
+      const size = 7 + Math.random() * 10;
+      el.style.width  = size + 'px';
+      el.style.height = size * (0.6 + Math.random() * 0.8) + 'px';
+      // 전체 화면 가로로 퍼지게
+      el.style.left = (Math.random() * 110 - 5) + 'vw';
+      // 일부는 위쪽에서, 일부는 중간 지점에서 터지게
+      el.style.top = (Math.random() < 0.4 ? '-30px' : (Math.random() * 30 - 20) + 'vh');
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      el.style.animationDuration = (1.8 + Math.random() * 2.5) + 's';
+      el.style.animationDelay    = '0s';
+      // 회전 방향 랜덤
+      el.style.setProperty('--rx', (Math.random() * 720 - 360) + 'deg');
+      el.style.setProperty('--ry', (Math.random() * 720 - 360) + 'deg');
+      el.style.setProperty('--dx', (Math.random() * 60 - 30) + 'vw');
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 5000);
+    }, i * 18);
+  }
+
+  // 2초 후 2차 폭발 (보너스 웨이브)
+  setTimeout(() => {
+    for (let i = 0; i < 80; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        const size = 5 + Math.random() * 12;
+        el.style.width  = size + 'px';
+        el.style.height = size + 'px';
+        el.style.left   = (Math.random() * 110 - 5) + 'vw';
+        el.style.top    = '-20px';
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.borderRadius = Math.random() > 0.3 ? '50%' : '3px';
+        el.style.animationDuration = (2 + Math.random() * 2) + 's';
+        el.style.animationDelay    = '0s';
+        el.style.setProperty('--rx', (Math.random() * 720 - 360) + 'deg');
+        el.style.setProperty('--ry', (Math.random() * 360) + 'deg');
+        el.style.setProperty('--dx', (Math.random() * 40 - 20) + 'vw');
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 5000);
+      }, i * 20);
+    }
+  }, 2000);
 }
 
 /* ══════════════════════════════════════════
