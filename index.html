@@ -921,33 +921,56 @@ function promotePlayer(stage, gi) {
   // 동점 처리: 첫 번째 최다 수저 보유자
   const pi = grp.players.findIndex(p => p.spoons === maxSpoons);
   const player = grp.players[pi];
-  if (!player.name) { showToast('이름을 먼저 저장해주세요.'); return; }
+  const playerName = (player.name || '').trim();
+  if (!playerName) { showToast('이름을 먼저 저장해주세요.'); return; }
 
   if (stage === 'qualifier') {
-    const slot = state.finalists.findIndex(f => !f.name);
+    // 빈 슬롯 찾기 (name이 비거나 공백인 슬롯)
+    const slot = state.finalists.findIndex(f => !(f.name || '').trim());
     if (slot === -1) { showToast('예선 진출자가 이미 9명입니다.'); return; }
+
+    // state 업데이트
     player.advanced = true;
     grp.players.forEach((p, i) => { if (i !== pi) p.eliminated = true; });
     grp.done = true;
-    state.finalists[slot].name = player.name;
-    state.finalists[slot].from = `예선 ${gi+1}조 1위`;
-    renderQualifier();
+    state.finalists[slot] = { name: playerName, from: `예선 ${gi+1}조 1위` };
+
+    // UI 갱신: 예선 카드만 부분 갱신 (전체 재렌더 대신)
+    grp.players.forEach((p, rowPi) => refreshRow('qualifier', gi, rowPi));
+    sortBySpoons('qualifier', gi);
+    updatePromoteBtn('qualifier', gi);
+    // 조 상태 뱃지 갱신
+    const statusEl = document.getElementById(`q-status-${gi}`);
+    if (statusEl) { statusEl.textContent = '✔ 완료'; statusEl.className = 'group-status done'; }
+
+    // 본선 진출자 패널 갱신
     renderFinalists();
     saveState();
-    showToast(`🎉 ${player.name} → 본선 진출! (수저 ${maxSpoons}개)`);
+    showToast(`🎉 ${playerName} → 본선 진출! (수저 ${maxSpoons}개)`);
 
   } else {
-    const slot = state.final.findIndex(p => !p.name);
+    // 빈 결선 슬롯 찾기
+    const slot = state.final.findIndex(p => !(p.name || '').trim());
     if (slot === -1) { showToast('결선 자리가 모두 찼습니다.'); return; }
+
+    // state 업데이트
     player.advanced = true;
     grp.players.forEach((p, i) => { if (i !== pi) p.eliminated = true; });
     grp.done = true;
-    state.final[slot].name = player.name;
-    state.final[slot].from = `본선 ${gi+1}조 1위`;
-    renderSemi();
+    state.final[slot] = { name: playerName, spoons: 0, champion: false, from: `본선 ${gi+1}조 1위` };
+
+    // UI 갱신: 본선 카드만 부분 갱신
+    grp.players.forEach((p, rowPi) => refreshRow('semi', gi, rowPi));
+    sortBySpoons('semi', gi);
+    updatePromoteBtn('semi', gi);
+    // 조 상태 뱃지 갱신
+    const statusEl = document.getElementById(`s-status-${gi}`);
+    if (statusEl) { statusEl.textContent = '✔ 완료'; statusEl.className = 'group-status done'; }
+
+    // 결선 패널 갱신
     renderFinal();
     saveState();
-    showToast(`🏆 ${player.name} → 최종 결선 진출! (수저 ${maxSpoons}개)`);
+    showToast(`🏆 ${playerName} → 최종 결선 진출! (수저 ${maxSpoons}개)`);
   }
 }
 
