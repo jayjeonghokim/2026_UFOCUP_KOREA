@@ -127,18 +127,54 @@
     }
     .section-reset-btn:hover { border-color:var(--accent); background:rgba(0,212,255,0.1); color:var(--accent); }
 
-    /* ── 잠금 오버레이 ── */
-    .lock-overlay {
-      display:none; position:absolute; inset:0; z-index:50;
-      background:rgba(10,10,26,0.72); backdrop-filter:blur(3px);
-      border-radius:inherit; align-items:center; justify-content:center;
-      flex-direction:column; gap:8px;
-    }
-    .lock-overlay.active { display:flex; }
-    .lock-overlay-icon { font-size:2.2rem; }
-    .lock-overlay-text { font-size:0.72rem; color:var(--text-dim); letter-spacing:2px; }
     /* 잠금 대상 래퍼 */
     .lockable-section { position:relative; }
+
+    /* ── 잠금 공사장 테두리 ── */
+    .lockable-section.section-locked {
+      border-radius: 14px;
+      outline: 4px solid transparent;
+      /* 공사장 줄무늬: 노랑/검정 45° 반복 */
+      box-shadow:
+        0 0 0 4px #0a0a1a,           /* 내측 여백 */
+        0 0 0 10px transparent;       /* 자리 확보 */
+      position: relative;
+    }
+    .lockable-section.section-locked::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 18px;
+      background: repeating-linear-gradient(
+        45deg,
+        #fbbf24 0px,   #fbbf24 10px,
+        #1a1a1a 10px,  #1a1a1a 20px
+      );
+      z-index: 10;
+      pointer-events: none;
+      /* 안쪽 내용이 보이도록 마스킹 — border처럼 보이게 */
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      padding: 8px;
+    }
+    /* 잠금 배지 (우상단) */
+    .lockable-section.section-locked::after {
+      content: '🔒 LOCKED';
+      position: absolute;
+      top: -14px; right: 12px;
+      background: #fbbf24;
+      color: #1a0a00;
+      font-size: 0.62rem; font-weight: 900;
+      letter-spacing: 2px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      z-index: 20;
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(251,191,36,0.5);
+    }
 
     /* ── 비밀번호 모달 ── */
     .pw-modal-backdrop {
@@ -652,10 +688,6 @@
     </div>
     <div class="lockable-section" id="wrap-qualifier">
       <div class="qualifier-grid" id="qualifier-grid"></div>
-      <div class="lock-overlay" id="overlay-qualifier">
-        <div class="lock-overlay-icon">🔒</div>
-        <div class="lock-overlay-text">LOCKED</div>
-      </div>
     </div>
 
     <!-- ░░ FINALISTS ░░ -->
@@ -690,10 +722,6 @@
     </div>
     <div class="lockable-section" id="wrap-semi">
       <div class="semi-grid" id="semi-grid"></div>
-      <div class="lock-overlay" id="overlay-semi">
-        <div class="lock-overlay-icon">🔒</div>
-        <div class="lock-overlay-text">LOCKED</div>
-      </div>
     </div>
 
     <div class="advance-flow">
@@ -713,10 +741,6 @@
       <div class="final-stage">
         <div class="final-header"><h3>★ GRAND FINAL ★</h3></div>
         <div class="final-players" id="final-players"></div>
-      </div>
-      <div class="lock-overlay" id="overlay-final">
-        <div class="lock-overlay-icon">🔒</div>
-        <div class="lock-overlay-text">LOCKED</div>
       </div>
     </div>
 
@@ -1462,15 +1486,15 @@ function sectionLabel(section) {
 }
 
 function applySectionLock(section) {
-  const overlay  = document.getElementById(`overlay-${section}`);
+  const wrap     = document.getElementById(`wrap-${section}`);
   const lockBtn  = document.getElementById(`lock-${section}`);
   const resetBtn = document.getElementById(`reset-${section}`);
   if (lockState[section]) {
-    overlay  && overlay.classList.add('active');
+    wrap     && wrap.classList.add('section-locked');
     lockBtn  && (lockBtn.textContent = '🔒', lockBtn.classList.add('locked'));
     resetBtn && (resetBtn.disabled = true);
   } else {
-    overlay  && overlay.classList.remove('active');
+    wrap     && wrap.classList.remove('section-locked');
     lockBtn  && (lockBtn.textContent = '🔓', lockBtn.classList.remove('locked'));
     resetBtn && (resetBtn.disabled = false);
   }
