@@ -1049,6 +1049,9 @@ function undoPromote(stage, gi, advIdx) {
     grp.players.forEach(p => { p.eliminated = false; });
     grp.done = false;
 
+    // 챔피언이 이 선수였다면 → 챔피언 전체 초기화
+    if ((state.champion || '').trim() === advName) resetChampion();
+
     // UI 갱신
     grp.players.forEach((p, rowPi) => refreshRow('qualifier', gi, rowPi));
     sortBySpoons('qualifier', gi);
@@ -1070,6 +1073,9 @@ function undoPromote(stage, gi, advIdx) {
     grp.players.forEach(p => { p.eliminated = false; });
     grp.done = false;
 
+    // 챔피언이 이 선수였거나, 결선 명단 변경으로 챔피언 상태가 깨짐 → 전체 초기화
+    if (state.champion) resetChampion();
+
     // UI 갱신
     grp.players.forEach((p, rowPi) => refreshRow('semi', gi, rowPi));
     sortBySpoons('semi', gi);
@@ -1081,6 +1087,13 @@ function undoPromote(stage, gi, advIdx) {
     saveState();
     showToast(`↩ ${advName} 결선 진출 취소 — 본선 ${gi+1}조 재진행`);
   }
+}
+
+/* 챔피언 선언 초기화 (배너 숨김 + state 클리어) */
+function resetChampion() {
+  state.champion = null;
+  state.final.forEach(p => { p.champion = false; });
+  document.getElementById('winner-banner').classList.remove('show');
 }
 
 /* ══════════════════════════════════════════
