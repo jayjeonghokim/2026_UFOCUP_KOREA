@@ -14,13 +14,14 @@
       --accent: #00d4ff;
       --accent2: #7c3aed;
       --gold: #fbbf24;
+      --gold2: #f59e0b;
       --green: #10b981;
       --red: #ef4444;
       --text: #e2e8f0;
       --text-dim: #64748b;
       --border: #1e2a5e;
       --glow: 0 0 20px rgba(0,212,255,0.3);
-      --glow-gold: 0 0 25px rgba(251,191,36,0.5);
+      --glow-gold: 0 0 30px rgba(251,191,36,0.7);
       --bronze: #b45309;
     }
 
@@ -107,8 +108,9 @@
     .badge-semi      { background:rgba(124,58,237,0.2); color:#a78bfa;       border:1px solid rgba(124,58,237,0.4); }
     .badge-final     { background:rgba(251,191,36,0.15); color:var(--gold);   border:1px solid rgba(251,191,36,0.4); }
 
-    /* ── Qualifier Grid ── */
+    /* ── Qualifier / Semi Grid ── */
     .qualifier-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .semi-grid      { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
 
     /* ── Group Card ── */
     .group-card {
@@ -116,8 +118,15 @@
       border-radius:14px; overflow:hidden; transition:border-color 0.3s;
     }
     .group-card:hover { border-color:rgba(0,212,255,0.2); }
+    .semi-card { background:var(--surface); border:1px solid rgba(124,58,237,0.3); border-radius:14px; overflow:hidden; }
+
     .group-header { background:var(--surface2); padding:9px 12px; display:flex; align-items:center; justify-content:space-between; }
+    .semi-header  {
+      background:linear-gradient(135deg,rgba(124,58,237,0.25),rgba(79,70,229,0.2));
+      padding:9px 12px; display:flex; align-items:center; justify-content:space-between;
+    }
     .group-title { font-size:0.78rem; font-weight:800; letter-spacing:2px; color:var(--accent); }
+    .semi-title  { font-size:0.76rem; font-weight:800; letter-spacing:2px; color:#a78bfa; }
     .group-status {
       font-size:0.62rem; padding:2px 7px; border-radius:10px; font-weight:700;
       background:rgba(100,116,139,0.2); color:var(--text-dim);
@@ -126,20 +135,26 @@
     .group-status.done { background:rgba(16,185,129,0.2); color:var(--green); border-color:rgba(16,185,129,0.4); }
     .player-list { padding:7px; }
 
-    /* ── Player Row ── */
+    /* ════════════════════════════════════════
+       PLAYER ROW
+    ════════════════════════════════════════ */
     .player-row {
       display:flex; align-items:center; gap:5px;
-      padding:6px 5px; border-radius:8px; margin-bottom:3px;
-      transition:all 0.25s; border:1px solid transparent;
+      padding:7px 6px; border-radius:10px; margin-bottom:4px;
+      transition:all 0.3s; border:1px solid transparent;
+      position:relative;
     }
     .player-row:last-child { margin-bottom:0; }
+
+    /* rank badge */
     .player-rank {
       width:20px; height:20px; border-radius:50%; display:flex;
       align-items:center; justify-content:center; font-size:0.65rem;
       font-weight:800; flex-shrink:0; background:var(--surface2); color:var(--text-dim);
+      transition:all 0.3s;
     }
 
-    /* ── Name area ── */
+    /* Name area */
     .name-area { flex:1; min-width:0; display:flex; align-items:center; gap:4px; }
     .player-name-display {
       flex:1; font-size:0.84rem; font-weight:600; color:var(--text);
@@ -160,39 +175,107 @@
     .btn-edit { background:rgba(0,212,255,0.1); color:var(--accent); border-color:rgba(0,212,255,0.3); }
     .btn-edit:hover { background:rgba(0,212,255,0.22); }
 
-    /* ── SPOON SCORE ── */
-    .spoon-row { display:flex; align-items:center; gap:3px; flex-shrink:0; }
+    /* ════════════════════════════════════════
+       🥄 SPOON — 황금빛 효과 강화
+    ════════════════════════════════════════ */
+    .spoon-row { display:flex; align-items:center; gap:4px; flex-shrink:0; }
+
+    /* 기본 수저: 완전히 어둡게 */
     .spoon {
-      font-size:1.1rem; cursor:pointer; transition:all 0.2s;
-      filter:grayscale(1) brightness(0.4);
-      user-select:none; line-height:1;
+      font-size:1.25rem;
+      cursor:pointer;
+      user-select:none;
+      line-height:1;
+      display:inline-block;
+      position:relative;
+      /* 비활성: 흑백 + 매우 어두움 */
+      filter: grayscale(100%) brightness(0.25) contrast(0.8);
+      opacity: 0.6;
+      transition: filter 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
     }
-    .spoon.active {
-      filter:none drop-shadow(0 0 6px #fbbf24) brightness(1.3);
-      animation:spoon-glow 0.4s ease;
-    }
-    @keyframes spoon-glow {
-      0%   { transform:scale(1); }
-      50%  { transform:scale(1.4) rotate(-15deg); }
-      100% { transform:scale(1); }
+    .spoon:hover {
+      filter: grayscale(60%) brightness(0.5);
+      opacity: 0.85;
+      transform: scale(1.15);
     }
 
-    /* ── Promote btn ── */
-    .promote-btn {
-      width:24px; height:24px; border-radius:6px; flex-shrink:0;
-      border:1px solid rgba(251,191,36,0.3); background:rgba(251,191,36,0.1);
-      color:var(--gold); font-size:0.75rem; cursor:pointer;
-      display:flex; align-items:center; justify-content:center; transition:all 0.2s;
+    /* 활성 수저: 눈에 확 들어오는 황금색 */
+    .spoon.lit {
+      filter:
+        brightness(1.6)
+        saturate(2.5)
+        drop-shadow(0 0 4px #fbbf24)
+        drop-shadow(0 0 10px #f59e0b)
+        drop-shadow(0 0 20px #d97706);
+      opacity: 1;
+      transform: scale(1.1);
+      /* 활성화 순간 튀어오르는 애니메이션 */
+      animation: spoon-pop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
     }
-    .promote-btn:hover { background:rgba(251,191,36,0.25); box-shadow:0 0 8px rgba(251,191,36,0.3); }
+
+    @keyframes spoon-pop {
+      0%   { transform: scale(0.7) rotate(-20deg); }
+      60%  { transform: scale(1.25) rotate(8deg); }
+      100% { transform: scale(1.1) rotate(0deg); }
+    }
+
+    /* 스파클 파티클 (CSS only) */
+    .spoon.lit::after {
+      content: '✦';
+      position: absolute;
+      top: -6px; right: -5px;
+      font-size: 0.55rem;
+      color: #fde68a;
+      animation: sparkle-fly 0.6s ease forwards;
+      pointer-events: none;
+    }
+    @keyframes sparkle-fly {
+      0%   { opacity:1; transform:translate(0,0) scale(1.2); }
+      100% { opacity:0; transform:translate(6px,-8px) scale(0.4); }
+    }
+
+    /* ── 진출 버튼 (그룹 카드 하단) ── */
+    .promote-area {
+      padding: 6px 7px 8px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .promote-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 14px; border-radius: 8px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, #92400e, #b45309, #d97706);
+      color: #fef3c7; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px;
+      transition: all 0.25s;
+      box-shadow: 0 2px 8px rgba(180,83,9,0.35);
+    }
+    .promote-btn:hover {
+      background: linear-gradient(135deg, #b45309, #d97706, #fbbf24);
+      color: #1a0a00;
+      box-shadow: 0 0 16px rgba(251,191,36,0.55);
+      transform: translateY(-1px);
+    }
+    .promote-btn:active { transform:translateY(0); }
+    .promote-btn:disabled {
+      opacity: 0.35; cursor: not-allowed;
+      box-shadow: none; transform: none;
+      background: var(--surface2); color: var(--text-dim);
+    }
 
     /* ── Player States ── */
-    .player-row.rank-1st { background:rgba(251,191,36,0.12); border-color:rgba(251,191,36,0.3); }
-    .player-row.rank-1st .player-rank { background:var(--gold); color:#1a1a0a; }
-    .player-row.eliminated { opacity:0.3; }
-    .player-row.advanced   { background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.25); }
+    .player-row.rank-1st {
+      background: linear-gradient(90deg, rgba(251,191,36,0.13), rgba(251,191,36,0.05));
+      border-color: rgba(251,191,36,0.45);
+    }
+    .player-row.rank-1st .player-rank {
+      background: linear-gradient(135deg,#f59e0b,#fbbf24);
+      color: #1a0a00; font-size:0.7rem;
+    }
+    .player-row.eliminated { opacity:0.28; pointer-events:none; }
+    .player-row.advanced {
+      background: rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.3);
+    }
     .player-row.advanced .player-rank { background:var(--green); color:white; }
-    .player-row.editing    { background:rgba(0,212,255,0.06); border-color:rgba(0,212,255,0.2); }
+    .player-row.editing  { background:rgba(0,212,255,0.06); border-color:rgba(0,212,255,0.2); }
 
     /* ── Flow Arrow ── */
     .advance-flow { display:flex; align-items:center; justify-content:center; padding:10px 0; gap:8px; }
@@ -200,13 +283,13 @@
     @keyframes bounce-down { 0%,100%{transform:translateY(0);opacity:1} 50%{transform:translateY(6px);opacity:0.5} }
     .flow-text { font-size:0.75rem; letter-spacing:2px; color:var(--text-dim); font-weight:600; }
 
-    /* ════════════════════════════════
-       QUALIFIER FINALISTS PANEL
-    ════════════════════════════════ */
+    /* ════════════════════════════════════════
+       FINALISTS PANEL
+    ════════════════════════════════════════ */
     .finalists-panel {
       background:var(--surface);
       border:1px solid rgba(0,212,255,0.25);
-      border-radius:16px; overflow:hidden; margin-bottom:0;
+      border-radius:16px; overflow:hidden;
     }
     .finalists-header {
       background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(124,58,237,0.15));
@@ -221,26 +304,21 @@
       transition:all 0.25s;
     }
     .draw-btn:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(124,58,237,0.5); }
-    .draw-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+    .draw-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none; }
     .draw-dice { font-size:1.2rem; display:inline-block; }
     .draw-btn:not(:disabled):hover .draw-dice { animation:dice-roll 0.5s ease; }
     @keyframes dice-roll {
-      0%   { transform:rotate(0deg) scale(1); }
-      25%  { transform:rotate(90deg) scale(1.3); }
-      50%  { transform:rotate(180deg) scale(1); }
-      75%  { transform:rotate(270deg) scale(1.3); }
-      100% { transform:rotate(360deg) scale(1); }
+      0%  {transform:rotate(0deg) scale(1);}   25%{transform:rotate(90deg) scale(1.3);}
+      50% {transform:rotate(180deg) scale(1);} 75%{transform:rotate(270deg) scale(1.3);}
+      100%{transform:rotate(360deg) scale(1);}
     }
-
-    .finalists-grid {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:0;
-    }
+    .finalists-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
     .finalist-slot {
       padding:10px 12px; border-right:1px solid var(--border); border-bottom:1px solid var(--border);
       display:flex; align-items:center; gap:8px; transition:background 0.3s;
     }
-    .finalist-slot:nth-child(3n) { border-right:none; }
-    .finalist-slot:nth-child(7),.finalist-slot:nth-child(8),.finalist-slot:nth-child(9) { border-bottom:none; }
+    .finalist-slot:nth-child(3n)   { border-right:none; }
+    .finalist-slot:nth-child(n+7)  { border-bottom:none; }
     .finalist-slot.empty { opacity:0.4; }
     .finalist-num {
       width:24px; height:24px; border-radius:50%; background:var(--surface2);
@@ -254,18 +332,9 @@
     .finalist-slot.shuffling { animation:slot-flash 0.15s ease infinite alternate; }
     @keyframes slot-flash { from{background:var(--surface2)} to{background:rgba(124,58,237,0.2)} }
 
-    /* ── Semi ── */
-    .semi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-    .semi-card { background:var(--surface); border:1px solid rgba(124,58,237,0.3); border-radius:14px; overflow:hidden; }
-    .semi-header {
-      background:linear-gradient(135deg,rgba(124,58,237,0.25),rgba(79,70,229,0.2));
-      padding:9px 12px; display:flex; align-items:center; justify-content:space-between;
-    }
-    .semi-title { font-size:0.76rem; font-weight:800; letter-spacing:2px; color:#a78bfa; }
-
-    /* ════════════════════════════════
-       GRAND FINAL — SPOON BOXES
-    ════════════════════════════════ */
+    /* ════════════════════════════════════════
+       GRAND FINAL
+    ════════════════════════════════════════ */
     .final-stage {
       background:var(--surface); border:1px solid rgba(251,191,36,0.35);
       border-radius:16px; overflow:hidden; box-shadow:0 0 40px rgba(251,191,36,0.07);
@@ -281,42 +350,73 @@
     }
     .final-players { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:14px; }
     .final-player-card {
-      background:var(--surface2); border:1px solid var(--border);
-      border-radius:12px; padding:18px 12px; text-align:center; transition:all 0.3s;
-      position:relative; overflow:hidden;
+      background:var(--surface2); border:2px solid var(--border);
+      border-radius:14px; padding:18px 12px 14px; text-align:center;
+      transition:all 0.35s; position:relative; overflow:hidden;
     }
-    .final-player-card::before {
-      content:''; position:absolute; inset:0;
-      background:radial-gradient(circle at 50% 0%, rgba(251,191,36,0.05), transparent 70%);
-      pointer-events:none;
+    .final-player-card.rank-top {
+      border-color: rgba(251,191,36,0.7);
+      background: linear-gradient(160deg,rgba(251,191,36,0.14),rgba(180,83,9,0.07));
+      box-shadow: 0 0 28px rgba(251,191,36,0.35), inset 0 0 20px rgba(251,191,36,0.05);
     }
     .final-player-card.champion {
-      background:linear-gradient(135deg,rgba(251,191,36,0.2),rgba(180,83,9,0.1));
-      border-color:rgba(251,191,36,0.6); box-shadow:var(--glow-gold);
+      border-color:rgba(251,191,36,0.9);
+      background:linear-gradient(135deg,rgba(251,191,36,0.22),rgba(180,83,9,0.12));
+      box-shadow: var(--glow-gold), inset 0 0 30px rgba(251,191,36,0.08);
     }
     .final-medal { font-size:1.8rem; margin-bottom:6px; }
-    .final-name { font-size:1.05rem; font-weight:800; color:var(--text); margin-bottom:4px; min-height:1.4em; }
-    .final-from { font-size:0.65rem; color:var(--text-dim); letter-spacing:1px; margin-bottom:12px; }
+    .final-name  { font-size:1.05rem; font-weight:800; color:var(--text); margin-bottom:3px; min-height:1.4em; }
+    .final-from  { font-size:0.62rem; color:var(--text-dim); letter-spacing:1px; margin-bottom:14px; }
 
-    /* Final spoon row */
-    .final-spoon-row { display:flex; justify-content:center; gap:6px; margin-bottom:10px; }
+    /* Final spoons — 더 크게, 더 눈에 띄게 */
+    .final-spoon-row { display:flex; justify-content:center; gap:8px; margin-bottom:12px; }
     .final-spoon {
-      font-size:1.6rem; cursor:pointer; transition:all 0.25s;
-      filter:grayscale(1) brightness(0.35);
+      font-size:1.9rem;
+      cursor:pointer;
       user-select:none;
+      display:inline-block;
+      position:relative;
+      filter: grayscale(100%) brightness(0.22) contrast(0.8);
+      opacity: 0.5;
+      transition: filter 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
     }
-    .final-spoon.active {
-      filter:none drop-shadow(0 0 8px #fbbf24) brightness(1.4);
-      animation:spoon-glow 0.4s ease;
+    .final-spoon:hover {
+      filter: grayscale(50%) brightness(0.5);
+      opacity:0.8;
+      transform:scale(1.15);
+    }
+    .final-spoon.lit {
+      filter:
+        brightness(1.7)
+        saturate(3)
+        drop-shadow(0 0 5px #fbbf24)
+        drop-shadow(0 0 14px #f59e0b)
+        drop-shadow(0 0 28px #d97706);
+      opacity:1;
+      transform:scale(1.15);
+      animation: spoon-pop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    .final-spoon.lit::after {
+      content:'✦';
+      position:absolute; top:-7px; right:-6px;
+      font-size:0.6rem; color:#fde68a;
+      animation:sparkle-fly 0.7s ease forwards;
+      pointer-events:none;
     }
 
     .champion-btn {
-      margin-top:2px; padding:5px 14px; border-radius:8px;
-      border:1px solid rgba(251,191,36,0.4); background:rgba(251,191,36,0.15);
-      color:var(--gold); font-size:0.72rem; font-weight:700;
-      cursor:pointer; transition:all 0.2s; display:none;
+      padding:6px 16px; border-radius:8px; border:none; cursor:pointer;
+      background:linear-gradient(135deg,#92400e,#d97706);
+      color:#fef3c7; font-size:0.75rem; font-weight:800;
+      transition:all 0.25s; display:none; letter-spacing:0.5px;
+      box-shadow:0 2px 8px rgba(180,83,9,0.4);
     }
-    .champion-btn:hover { background:rgba(251,191,36,0.3); box-shadow:0 0 12px rgba(251,191,36,0.3); }
+    .champion-btn:hover {
+      background:linear-gradient(135deg,#d97706,#fbbf24);
+      color:#1a0a00;
+      box-shadow:0 0 20px rgba(251,191,36,0.6);
+      transform:translateY(-1px);
+    }
 
     /* ── Winner Banner ── */
     .winner-banner {
@@ -324,7 +424,7 @@
       background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(124,58,237,0.1));
       border:2px solid var(--gold); border-radius:20px; animation:glow-pulse 2s ease infinite;
     }
-    @keyframes glow-pulse { 0%,100%{box-shadow:0 0 20px rgba(251,191,36,0.3)} 50%{box-shadow:0 0 60px rgba(251,191,36,0.6)} }
+    @keyframes glow-pulse { 0%,100%{box-shadow:0 0 20px rgba(251,191,36,0.3)} 50%{box-shadow:0 0 60px rgba(251,191,36,0.7)} }
     .winner-banner.show { display:block; }
     .winner-banner .trophy { font-size:3.8rem; animation:spin-slow 4s linear infinite; }
     @keyframes spin-slow { from{transform:rotateY(0deg)} to{transform:rotateY(360deg)} }
@@ -341,8 +441,8 @@
       pointer-events:none; z-index:9999; animation:confetti-fall linear forwards;
     }
     @keyframes confetti-fall {
-      0%   { transform:translateY(-20px) rotate(0deg); opacity:1; }
-      100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
+      0%  { transform:translateY(-20px) rotate(0deg);   opacity:1; }
+      100%{ transform:translateY(110vh)  rotate(720deg); opacity:0; }
     }
 
     /* ── Toast ── */
@@ -405,17 +505,16 @@
       <h2 style="color:var(--accent)">⚡ 예선 라운드</h2>
       <span class="badge badge-qualifier">QUALIFIER</span>
       <div class="section-line"></div>
-      <span style="font-size:0.72rem;color:var(--text-dim)">각 조 수저 최다자 본선 진출</span>
+      <span style="font-size:0.72rem;color:var(--text-dim)">수저 최다자 → 진출 버튼</span>
     </div>
     <div class="qualifier-grid" id="qualifier-grid"></div>
 
-    <!-- ░░ QUALIFIER FINALISTS ░░ -->
+    <!-- ░░ FINALISTS ░░ -->
     <div class="advance-flow">
       <div class="flow-arrow">↓</div>
       <div class="flow-text">예선 9조 1위 → 본선 진출</div>
       <div class="flow-arrow">↓</div>
     </div>
-
     <div class="finalists-panel" id="finalists-panel">
       <div class="finalists-header">
         <h3>🎖 본선 진출자 (9명)</h3>
@@ -437,7 +536,7 @@
       <h2 style="color:#a78bfa">🏆 본선 라운드</h2>
       <span class="badge badge-semi">SEMI-FINAL</span>
       <div class="section-line"></div>
-      <span style="font-size:0.72rem;color:var(--text-dim)">3조 각 수저 최다자 결선 진출</span>
+      <span style="font-size:0.72rem;color:var(--text-dim)">수저 최다자 → 진출 버튼</span>
     </div>
     <div class="semi-grid" id="semi-grid"></div>
 
@@ -482,7 +581,7 @@
 
 <script>
 /* ══════════════════════════════════════════
-   DEFAULT NAMES
+   CONFIG
 ══════════════════════════════════════════ */
 const DEFAULT_NAMES = [
   ['강민준','이서윤','박지호','최예린'],
@@ -496,11 +595,11 @@ const DEFAULT_NAMES = [
   ['방성혁','진미래','사공준','도예지'],
 ];
 
-const MAX_SPOONS    = 3;
-const QUAL_GROUPS   = 9;
-const QUAL_PER      = 4;
-const SEMI_GROUPS   = 3;
-const SEMI_PER      = 3;
+const MAX_SPOONS  = 3;
+const QUAL_GROUPS = 9;
+const QUAL_PER    = 4;
+const SEMI_GROUPS = 3;
+const SEMI_PER    = 3;
 
 /* ══════════════════════════════════════════
    STATE
@@ -510,19 +609,15 @@ const state = {
     done: false,
     players: Array.from({length: QUAL_PER}, (_, pi) => ({
       name: DEFAULT_NAMES[gi][pi],
-      spoons: 0,
-      advanced: false,
-      eliminated: false,
-      editing: false,
+      spoons: 0, advanced: false, eliminated: false, editing: false,
     }))
   })),
-  // 예선 통과자 9명 슬롯 (순서 섞임)
   finalists: Array.from({length: 9}, () => ({ name:'', from:'' })),
-  shuffled: false,   // 추첨 완료 여부
+  shuffled: false,
   semi: Array.from({length: SEMI_GROUPS}, () => ({
     done: false,
     players: Array.from({length: SEMI_PER}, () => ({
-      name: '', spoons: 0, advanced: false, eliminated: false, from:'', editing:false,
+      name:'', spoons:0, advanced:false, eliminated:false, from:'', editing:false,
     }))
   })),
   final: Array.from({length: 3}, () => ({
@@ -548,10 +643,16 @@ function renderQualifier() {
               onclick="toggleDone('qualifier',${gi})">${group.done?'✔ 완료':'진행중'}</span>
       </div>
       <div class="player-list" id="q-list-${gi}"></div>
+      <div class="promote-area">
+        <button class="promote-btn" id="q-promote-${gi}" onclick="promotePlayer('qualifier',${gi})">
+          🥄 진출
+        </button>
+      </div>
     `;
     grid.appendChild(card);
     const list = card.querySelector(`#q-list-${gi}`);
     group.players.forEach((p, pi) => list.appendChild(buildRow('qualifier', gi, pi, p)));
+    updatePromoteBtn('qualifier', gi);
   });
 }
 
@@ -572,15 +673,45 @@ function renderSemi() {
               onclick="toggleDone('semi',${gi})">${group.done?'✔ 완료':'진행중'}</span>
       </div>
       <div class="player-list" id="s-list-${gi}"></div>
+      <div class="promote-area">
+        <button class="promote-btn" id="s-promote-${gi}" onclick="promotePlayer('semi',${gi})">
+          🥄 진출
+        </button>
+      </div>
     `;
     grid.appendChild(card);
     const list = card.querySelector(`#s-list-${gi}`);
     group.players.forEach((p, pi) => list.appendChild(buildRow('semi', gi, pi, p)));
+    updatePromoteBtn('semi', gi);
   });
 }
 
 /* ══════════════════════════════════════════
-   RENDER FINALISTS PANEL
+   진출 버튼 활성/비활성 업데이트
+══════════════════════════════════════════ */
+function updatePromoteBtn(stage, gi) {
+  const prefix = stage === 'qualifier' ? 'q' : 's';
+  const btn    = document.getElementById(`${prefix}-promote-${gi}`);
+  if (!btn) return;
+  const grp    = stage === 'qualifier' ? state.qualifier[gi] : state.semi[gi];
+  const already = grp.players.some(p => p.advanced);
+  // 수저 최다자 찾기
+  const maxSpoons = Math.max(...grp.players.map(p => p.spoons));
+  const leader    = grp.players.find(p => p.spoons === maxSpoons && p.spoons > 0);
+  if (already) {
+    btn.disabled = true;
+    btn.textContent = '✔ 진출 완료';
+  } else if (leader) {
+    btn.disabled = false;
+    btn.textContent = `🥄 진출 → ${leader.name}`;
+  } else {
+    btn.disabled = true;
+    btn.textContent = '🥄 진출';
+  }
+}
+
+/* ══════════════════════════════════════════
+   RENDER FINALISTS
 ══════════════════════════════════════════ */
 function renderFinalists() {
   const grid = document.getElementById('finalists-grid');
@@ -598,7 +729,6 @@ function renderFinalists() {
     `;
     grid.appendChild(slot);
   });
-  // draw 버튼 활성/비활성
   const allFilled = state.finalists.every(f => f.name);
   document.getElementById('draw-btn').disabled = !allFilled || state.shuffled;
 }
@@ -612,21 +742,27 @@ function renderFinal() {
   const medals = ['🥇','🥈','🥉'];
   const labels  = ['결선 진출자 1','결선 진출자 2','결선 진출자 3'];
 
+  // 최고 수저 수
+  const maxS = Math.max(...state.final.map(p => p.spoons));
+
   state.final.forEach((player, i) => {
-    const card = document.createElement('div');
-    card.className = `final-player-card${player.champion?' champion':''}`;
+    const isTop = player.spoons > 0 && player.spoons === maxS;
+    const card  = document.createElement('div');
+    let cardCls = 'final-player-card';
+    if (player.champion) cardCls += ' champion';
+    else if (isTop) cardCls += ' rank-top';
+    card.className = cardCls;
     card.id = `f-card-${i}`;
 
-    // spoon row
     let spoonHtml = '<div class="final-spoon-row">';
     for (let s = 0; s < MAX_SPOONS; s++) {
-      spoonHtml += `<span class="final-spoon${s < player.spoons?' active':''}"
+      spoonHtml += `<span class="final-spoon${s < player.spoons?' lit':''}"
                          onclick="clickFinalSpoon(${i},${s})">🥄</span>`;
     }
     spoonHtml += '</div>';
 
     card.innerHTML = `
-      <div class="final-medal">${player.champion ? '🏆' : medals[i]}</div>
+      <div class="final-medal">${player.champion ? '🏆' : (isTop ? '✨' : medals[i])}</div>
       <div class="final-name">${player.name || '—'}</div>
       <div class="final-from">${player.from || labels[i]}</div>
       ${spoonHtml}
@@ -660,32 +796,23 @@ function buildRow(stage, gi, pi, player) {
 
   if (player.editing) {
     const inp = document.createElement('input');
-    inp.type = 'text'; inp.className = 'player-name-input';
-    inp.value = player.name; inp.maxLength = 12;
-    inp.placeholder = `선수 ${pi+1}`;
-    inp.id = `inp-${stage}-${gi}-${pi}`;
-    inp.addEventListener('keydown', e => { if (e.key==='Enter') saveName(stage,gi,pi); });
-
-    const saveBtn = document.createElement('button');
-    saveBtn.className = 'name-action-btn btn-save';
-    saveBtn.textContent = '저장';
-    saveBtn.onclick = () => saveName(stage, gi, pi);
-
-    nameArea.appendChild(inp);
-    nameArea.appendChild(saveBtn);
-    setTimeout(() => inp.focus(), 40);
+    inp.type='text'; inp.className='player-name-input';
+    inp.value=player.name; inp.maxLength=12; inp.placeholder=`선수 ${pi+1}`;
+    inp.id=`inp-${stage}-${gi}-${pi}`;
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter') saveName(stage,gi,pi); });
+    const saveBtn=document.createElement('button');
+    saveBtn.className='name-action-btn btn-save'; saveBtn.textContent='저장';
+    saveBtn.onclick=()=>saveName(stage,gi,pi);
+    nameArea.appendChild(inp); nameArea.appendChild(saveBtn);
+    setTimeout(()=>inp.focus(),40);
   } else {
-    const disp = document.createElement('div');
-    disp.className = `player-name-display${player.name?'':' empty'}`;
-    disp.textContent = player.name || `선수 ${pi+1}`;
-
-    const editBtn = document.createElement('button');
-    editBtn.className = 'name-action-btn btn-edit';
-    editBtn.textContent = '수정';
-    editBtn.onclick = () => startEdit(stage, gi, pi);
-
-    nameArea.appendChild(disp);
-    nameArea.appendChild(editBtn);
+    const disp=document.createElement('div');
+    disp.className=`player-name-display${player.name?'':' empty'}`;
+    disp.textContent=player.name||`선수 ${pi+1}`;
+    const editBtn=document.createElement('button');
+    editBtn.className='name-action-btn btn-edit'; editBtn.textContent='수정';
+    editBtn.onclick=()=>startEdit(stage,gi,pi);
+    nameArea.appendChild(disp); nameArea.appendChild(editBtn);
   }
 
   // spoons
@@ -693,68 +820,48 @@ function buildRow(stage, gi, pi, player) {
   spoonRow.className = 'spoon-row';
   for (let s = 0; s < MAX_SPOONS; s++) {
     const sp = document.createElement('span');
-    sp.className = `spoon${s < player.spoons ? ' active' : ''}`;
+    sp.className = `spoon${s < player.spoons ? ' lit' : ''}`;
     sp.textContent = '🥄';
     sp.onclick = () => clickSpoon(stage, gi, pi, s);
     spoonRow.appendChild(sp);
   }
 
-  // promote (rank 0 only)
-  const promBtn = document.createElement('button');
-  promBtn.className = 'promote-btn';
-  promBtn.title = '다음 라운드 진출';
-  promBtn.textContent = '↑';
-  promBtn.style.visibility = pi === 0 ? 'visible' : 'hidden';
-  if (player.advanced) { promBtn.style.background='rgba(16,185,129,0.3)'; promBtn.style.color='#6ee7b7'; }
-  promBtn.onclick = () => promotePlayer(stage, gi, pi);
-
   row.appendChild(rankEl);
   row.appendChild(nameArea);
   row.appendChild(spoonRow);
-  row.appendChild(promBtn);
   return row;
 }
 
 /* ══════════════════════════════════════════
-   SPOON CLICK (qualifier / semi)
+   SPOON CLICK — qualifier / semi
 ══════════════════════════════════════════ */
 function clickSpoon(stage, gi, pi, spoonIdx) {
   const grp = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
   const player = grp.players[pi];
-  // toggle: if clicking the last active spoon → turn off; else set to spoonIdx+1
-  if (player.spoons === spoonIdx + 1) {
-    player.spoons = 0;
-  } else {
-    player.spoons = spoonIdx + 1;
-  }
+  // 같은 수저 재클릭 → 초기화, 아니면 해당 개수 설정
+  player.spoons = (player.spoons === spoonIdx + 1) ? 0 : spoonIdx + 1;
   refreshRow(stage, gi, pi);
   sortBySpoons(stage, gi);
+  updatePromoteBtn(stage, gi);
   saveState();
 }
 
 /* ══════════════════════════════════════════
-   SPOON CLICK (final)
+   SPOON CLICK — final
 ══════════════════════════════════════════ */
 function clickFinalSpoon(i, spoonIdx) {
   const player = state.final[i];
-  if (player.spoons === spoonIdx + 1) player.spoons = 0;
-  else player.spoons = spoonIdx + 1;
-  // re-render final spoons only
-  const row = document.getElementById(`f-card-${i}`);
-  if (!row) return;
-  const spans = row.querySelectorAll('.final-spoon');
-  spans.forEach((sp, s) => {
-    sp.className = `final-spoon${s < player.spoons ? ' active' : ''}`;
-  });
-  sortFinalBySpoons();
+  player.spoons = (player.spoons === spoonIdx + 1) ? 0 : spoonIdx + 1;
+  // 전체 결선 다시 그리기 (rank-top 하이라이트 반영)
+  renderFinal();
   saveState();
 }
 
 /* ══════════════════════════════════════════
-   SORT BY SPOONS
+   SORT BY SPOONS — 시각적 순위 갱신
 ══════════════════════════════════════════ */
 function sortBySpoons(stage, gi) {
-  const grp = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
+  const grp    = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
   const sorted = grp.players.map((p,i)=>({p,i})).sort((a,b)=>b.p.spoons - a.p.spoons);
   sorted.forEach(({p,i}, rank) => {
     const row = document.getElementById(`${stage}-${gi}-${i}`);
@@ -763,26 +870,10 @@ function sortBySpoons(stage, gi) {
     if      (p.advanced)   cls += ' advanced';
     else if (p.eliminated) cls += ' eliminated';
     else if (p.editing)    cls += ' editing';
-    else if (rank===0 && p.name) cls += ' rank-1st';
+    else if (rank===0 && p.name && p.spoons > 0) cls += ' rank-1st';
     row.className = cls;
     const rEl = row.querySelector('.player-rank');
     if (rEl) rEl.textContent = rank + 1;
-  });
-}
-
-function sortFinalBySpoons() {
-  // visual only — gold border on max spoon holder
-  const maxSpoons = Math.max(...state.final.map(p=>p.spoons));
-  state.final.forEach((p, i) => {
-    const card = document.getElementById(`f-card-${i}`);
-    if (!card || p.champion) return;
-    if (p.spoons === maxSpoons && maxSpoons > 0) {
-      card.style.borderColor = 'rgba(251,191,36,0.55)';
-      card.style.background  = 'linear-gradient(135deg,rgba(251,191,36,0.12),rgba(180,83,9,0.07))';
-    } else {
-      card.style.borderColor = '';
-      card.style.background  = '';
-    }
   });
 }
 
@@ -794,7 +885,6 @@ function startEdit(stage, gi, pi) {
   grp.players[pi].editing = true;
   refreshRow(stage, gi, pi);
 }
-
 function saveName(stage, gi, pi) {
   const inp = document.getElementById(`inp-${stage}-${gi}-${pi}`);
   if (!inp) return;
@@ -804,109 +894,61 @@ function saveName(stage, gi, pi) {
   grp.players[pi].editing = false;
   refreshRow(stage, gi, pi);
   sortBySpoons(stage, gi);
+  updatePromoteBtn(stage, gi);
   saveState();
-  showToast(`✅ 저장: ${val || '(없음)'}`);
+  showToast(`✅ 저장: ${val||'(없음)'}`);
 }
-
 function refreshRow(stage, gi, pi) {
   const grp  = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
-  const p    = grp.players[pi];
   const lid  = stage==='qualifier' ? `q-list-${gi}` : `s-list-${gi}`;
   const list = document.getElementById(lid);
   const old  = document.getElementById(`${stage}-${gi}-${pi}`);
-  const nw   = buildRow(stage, gi, pi, p);
+  const nw   = buildRow(stage, gi, pi, grp.players[pi]);
   if (old && list) list.replaceChild(nw, old);
 }
 
 /* ══════════════════════════════════════════
-   PROMOTE PLAYER
+   PROMOTE — 진출 버튼 클릭
 ══════════════════════════════════════════ */
-function promotePlayer(stage, gi, pi) {
-  if (stage === 'qualifier') {
-    const player = state.qualifier[gi].players[pi];
-    if (!player.name) { showToast('이름을 먼저 저장해주세요.'); return; }
+function promotePlayer(stage, gi) {
+  const grp = stage==='qualifier' ? state.qualifier[gi] : state.semi[gi];
+  if (grp.players.some(p => p.advanced)) { showToast('이미 진출자가 있습니다.'); return; }
 
-    // push to finalists
+  // 수저 가장 많은 선수 찾기
+  const maxSpoons = Math.max(...grp.players.map(p => p.spoons));
+  if (maxSpoons === 0) { showToast('🥄 수저를 먼저 클릭해 선택해주세요.'); return; }
+
+  // 동점 처리: 첫 번째 최다 수저 보유자
+  const pi = grp.players.findIndex(p => p.spoons === maxSpoons);
+  const player = grp.players[pi];
+  if (!player.name) { showToast('이름을 먼저 저장해주세요.'); return; }
+
+  if (stage === 'qualifier') {
     const slot = state.finalists.findIndex(f => !f.name);
     if (slot === -1) { showToast('예선 진출자가 이미 9명입니다.'); return; }
-
     player.advanced = true;
-    state.qualifier[gi].players.forEach((p,i) => { if (i!==pi) p.eliminated = true; });
-    state.qualifier[gi].done = true;
-
+    grp.players.forEach((p, i) => { if (i !== pi) p.eliminated = true; });
+    grp.done = true;
     state.finalists[slot].name = player.name;
     state.finalists[slot].from = `예선 ${gi+1}조 1위`;
-
     renderQualifier();
     renderFinalists();
     saveState();
-    showToast(`🎉 ${player.name} → 본선 진출자 ${slot+1}번!`);
+    showToast(`🎉 ${player.name} → 본선 진출! (수저 ${maxSpoons}개)`);
 
-  } else if (stage === 'semi') {
-    const player = state.semi[gi].players[pi];
-    if (!player.name) { showToast('이름을 먼저 저장해주세요.'); return; }
-
+  } else {
     const slot = state.final.findIndex(p => !p.name);
     if (slot === -1) { showToast('결선 자리가 모두 찼습니다.'); return; }
-
     player.advanced = true;
-    state.semi[gi].players.forEach((p,i) => { if (i!==pi) p.eliminated = true; });
-    state.semi[gi].done = true;
+    grp.players.forEach((p, i) => { if (i !== pi) p.eliminated = true; });
+    grp.done = true;
     state.final[slot].name = player.name;
     state.final[slot].from = `본선 ${gi+1}조 1위`;
-
     renderSemi();
     renderFinal();
     saveState();
-    showToast(`🏆 ${player.name} → 최종 결선 진출!`);
+    showToast(`🏆 ${player.name} → 최종 결선 진출! (수저 ${maxSpoons}개)`);
   }
-}
-
-/* ══════════════════════════════════════════
-   SHUFFLE / DRAW (본선 추첨)
-══════════════════════════════════════════ */
-function doShuffle() {
-  if (state.shuffled) return;
-  const btn = document.getElementById('draw-btn');
-  btn.disabled = true;
-
-  // Fisher-Yates shuffle
-  const arr = [...state.finalists];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-
-  // animate slots
-  let frame = 0;
-  const totalFrames = 20;
-  const slots = document.querySelectorAll('.finalist-slot');
-
-  const animate = setInterval(() => {
-    slots.forEach(s => s.classList.toggle('shuffling'));
-    frame++;
-    if (frame >= totalFrames) {
-      clearInterval(animate);
-      slots.forEach(s => s.classList.remove('shuffling'));
-
-      // apply shuffled order
-      state.finalists = arr;
-      state.shuffled = true;
-
-      // assign to semi groups (0-2 → S0, 3-5 → S1, 6-8 → S2)
-      state.finalists.forEach((f, idx) => {
-        const sGi = Math.floor(idx / 3);
-        const sPi = idx % 3;
-        state.semi[sGi].players[sPi].name = f.name;
-        state.semi[sGi].players[sPi].from = f.from;
-      });
-
-      renderFinalists();
-      renderSemi();
-      saveState();
-      showToast('🎲 본선 추첨 완료! 본선 3조가 편성되었습니다.');
-    }
-  }, 80);
 }
 
 /* ══════════════════════════════════════════
@@ -918,8 +960,43 @@ function toggleDone(stage, gi) {
   const prefix = stage==='qualifier' ? 'q' : 's';
   const el = document.getElementById(`${prefix}-status-${gi}`);
   el.textContent = grp.done ? '✔ 완료' : '진행중';
-  el.className = `group-status${grp.done?' done':''}`;
+  el.className   = `group-status${grp.done?' done':''}`;
   saveState();
+}
+
+/* ══════════════════════════════════════════
+   SHUFFLE / DRAW
+══════════════════════════════════════════ */
+function doShuffle() {
+  if (state.shuffled) return;
+  document.getElementById('draw-btn').disabled = true;
+  const arr = [...state.finalists];
+  for (let i = arr.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  let frame = 0;
+  const totalFrames = 22;
+  const slots = document.querySelectorAll('.finalist-slot');
+  const anim = setInterval(()=>{
+    slots.forEach(s=>s.classList.toggle('shuffling'));
+    frame++;
+    if (frame >= totalFrames) {
+      clearInterval(anim);
+      slots.forEach(s=>s.classList.remove('shuffling'));
+      state.finalists = arr;
+      state.shuffled  = true;
+      arr.forEach((f, idx)=>{
+        const sGi=Math.floor(idx/3), sPi=idx%3;
+        state.semi[sGi].players[sPi].name = f.name;
+        state.semi[sGi].players[sPi].from = f.from;
+      });
+      renderFinalists();
+      renderSemi();
+      saveState();
+      showToast('🎲 본선 추첨 완료! 3조가 편성되었습니다.');
+    }
+  }, 80);
 }
 
 /* ══════════════════════════════════════════
@@ -934,7 +1011,6 @@ function setChampion(i) {
   showWinner(player.name);
   saveState();
 }
-
 function showWinner(name) {
   const banner = document.getElementById('winner-banner');
   document.getElementById('winner-name').textContent = name;
@@ -948,7 +1024,7 @@ function showWinner(name) {
 ══════════════════════════════════════════ */
 function spawnConfetti() {
   const colors=['#fbbf24','#00d4ff','#7c3aed','#10b981','#ef4444','#f472b6'];
-  for (let i=0;i<90;i++) setTimeout(()=>{
+  for(let i=0;i<90;i++) setTimeout(()=>{
     const el=document.createElement('div');
     el.className='confetti-piece';
     el.style.left=Math.random()*100+'vw';
@@ -957,7 +1033,7 @@ function spawnConfetti() {
     el.style.animationDelay=(Math.random()*0.5)+'s';
     document.body.appendChild(el);
     setTimeout(()=>el.remove(),5000);
-  }, i*30);
+  },i*30);
 }
 
 /* ══════════════════════════════════════════
@@ -967,7 +1043,7 @@ function showToast(msg) {
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
   clearTimeout(t._tid);
-  t._tid=setTimeout(()=>t.classList.remove('show'),3000);
+  t._tid=setTimeout(()=>t.classList.remove('show'),3200);
 }
 
 /* ══════════════════════════════════════════
@@ -991,8 +1067,8 @@ function timerToggle(id){
     clearInterval(t.interval); t.running=false;
     btn.textContent='▶ 재개'; btn.classList.remove('active');
   } else {
-    if(t.remaining<=0)return; t.running=true;
-    btn.textContent='⏸ 일시중지'; btn.classList.add('active');
+    if(t.remaining<=0)return;
+    t.running=true; btn.textContent='⏸ 일시중지'; btn.classList.add('active');
     t.interval=setInterval(()=>tickTimer(id),1000);
   }
 }
@@ -1030,24 +1106,21 @@ function updateTimerDisplay(id){
 ══════════════════════════════════════════ */
 function saveState(){
   try {
-    localStorage.setItem('ufo2026_v3', JSON.stringify({
-      qualifier: state.qualifier,
-      finalists: state.finalists,
-      shuffled:  state.shuffled,
-      semi:      state.semi,
-      final:     state.final,
-      champion:  state.champion,
+    localStorage.setItem('ufo2026_v4', JSON.stringify({
+      qualifier:state.qualifier, finalists:state.finalists,
+      shuffled:state.shuffled,   semi:state.semi,
+      final:state.final,         champion:state.champion,
     }));
   } catch(e){}
 }
 function loadState(){
   try {
-    const raw=localStorage.getItem('ufo2026_v3');
+    const raw=localStorage.getItem('ufo2026_v4');
     if(!raw) return;
     const s=JSON.parse(raw);
     if(s.qualifier) state.qualifier=s.qualifier;
     if(s.finalists) state.finalists=s.finalists;
-    if(s.shuffled  !== undefined) state.shuffled=s.shuffled;
+    if(s.shuffled!==undefined) state.shuffled=s.shuffled;
     if(s.semi)      state.semi=s.semi;
     if(s.final)     state.final=s.final;
     if(s.champion)  state.champion=s.champion;
@@ -1065,7 +1138,6 @@ function init(){
   renderFinal();
   for(let gi=0;gi<QUAL_GROUPS;gi++) sortBySpoons('qualifier',gi);
   for(let gi=0;gi<SEMI_GROUPS;gi++) sortBySpoons('semi',gi);
-  sortFinalBySpoons();
   if(state.champion) setTimeout(()=>showWinner(state.champion),300);
 }
 
