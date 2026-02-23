@@ -771,15 +771,15 @@
    CONFIG
 ══════════════════════════════════════════ */
 const DEFAULT_NAMES = [
-  ['강민준','이서윤','박지호','최예린'],
-  ['정우성','김나연','오준혁','신지아'],
-  ['한승우','윤채원','임도현','장하은'],
-  ['조민서','배수진','권태양','류지현'],
-  ['문성준','서아름','노태훈','엄지수'],
-  ['심재원','고은별','안준서','변하린'],
-  ['남기훈','황소연','전민재','석다은'],
-  ['구자훈','마유진','원도경','표나리'],
-  ['방성혁','진미래','사공준','도예지'],
+  ['박봉제','김형주','김준택','박강수'],
+  ['이재호','임종선','김두일','김민우'],
+  ['유대현','이항범','조건희','한선미'],
+  ['한준호','박주환','이진형','이지수'],
+  ['전휴덕','이현수','김동욱','조백관'],
+  ['류승현','김민제','정대훈','이장섭'],
+  ['강선화','김강민','최준호','윤영수'],
+  ['최인석','정현준','김건기','김형철'],
+  ['유재훈','민덕규','이현진','박영훈'],
 ];
 
 const MAX_SPOONS  = 3;
@@ -1454,7 +1454,7 @@ function updateTimerDisplay(id){
 ══════════════════════════════════════════ */
 function saveState(){
   try {
-    localStorage.setItem('ufo2026_v4', JSON.stringify({
+    localStorage.setItem('ufo2026_v5', JSON.stringify({
       qualifier:state.qualifier, finalists:state.finalists,
       shuffled:state.shuffled,   semi:state.semi,
       final:state.final,         champion:state.champion,
@@ -1463,7 +1463,7 @@ function saveState(){
 }
 function loadState(){
   try {
-    const raw=localStorage.getItem('ufo2026_v4');
+    const raw=localStorage.getItem('ufo2026_v5');
     if(!raw) return;
     const s=JSON.parse(raw);
     if(s.qualifier) state.qualifier=s.qualifier;
