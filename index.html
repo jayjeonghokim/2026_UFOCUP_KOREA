@@ -258,6 +258,13 @@
       padding:9px 12px; display:flex; align-items:center; justify-content:space-between;
     }
     .group-title { font-size:0.78rem; font-weight:800; letter-spacing:2px; color:var(--accent); }
+    .group-time  {
+      font-size:0.6rem; font-weight:600; letter-spacing:0.5px;
+      color:#94a3b8; background:rgba(0,212,255,0.07);
+      border:1px solid rgba(0,212,255,0.15);
+      border-radius:6px; padding:1px 6px; margin-left:4px;
+      white-space:nowrap;
+    }
     .semi-title  { font-size:0.76rem; font-weight:800; letter-spacing:2px; color:#a78bfa; }
     .group-status {
       font-size:0.62rem; padding:2px 7px; border-radius:10px; font-weight:700;
@@ -782,6 +789,12 @@ const DEFAULT_NAMES = [
   ['유재훈','민덕규','이현진','박영훈'],
 ];
 
+const QUAL_TIMES = [
+  '10:15~10:22','10:25~10:32','10:35~10:42',
+  '10:45~10:52','10:55~11:02','11:05~11:12',
+  '11:15~11:22','11:25~11:32','11:35~11:42',
+];
+
 const MAX_SPOONS  = 3;
 const QUAL_GROUPS = 9;
 const QUAL_PER    = 4;
@@ -825,7 +838,7 @@ function renderQualifier() {
     card.id = `q-card-${gi}`;
     card.innerHTML = `
       <div class="group-header">
-        <span class="group-title">예선 ${gi+1}조</span>
+        <span class="group-title">예선 ${gi+1}조<span class="group-time">⏱ ${QUAL_TIMES[gi]}</span></span>
         <span class="group-status${group.done?' done':''}" id="q-status-${gi}"
               onclick="toggleDone('qualifier',${gi})">${group.done?'✔ 완료':'진행중'}</span>
       </div>
