@@ -1494,7 +1494,7 @@ function loadState(){
    SECTION LOCK
 ══════════════════════════════════════════ */
 const LOCK_PW   = 'JAYUFOJAY2';
-const lockState = { qualifier: false, semi: false, final: false };
+const lockState = { qualifier: true, semi: false, final: false };
 
 function sectionLabel(section) {
   return { qualifier:'예선 라운드', semi:'본선 라운드', final:'최종 결선' }[section] || section;
