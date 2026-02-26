@@ -1471,6 +1471,7 @@ function saveState(){
       qualifier:state.qualifier, finalists:state.finalists,
       shuffled:state.shuffled,   semi:state.semi,
       final:state.final,         champion:state.champion,
+      lockState: { ...lockState },
     }));
   } catch(e){}
 }
@@ -1485,6 +1486,7 @@ function loadState(){
     if(s.semi)      state.semi=s.semi;
     if(s.final)     state.final=s.final;
     if(s.champion)  state.champion=s.champion;
+    if(s.lockState) Object.assign(lockState, s.lockState);
   } catch(e){}
 }
 
@@ -1642,6 +1644,8 @@ function init(){
   renderFinal();
   for(let gi=0;gi<QUAL_GROUPS;gi++) sortBySpoons('qualifier',gi);
   for(let gi=0;gi<SEMI_GROUPS;gi++) sortBySpoons('semi',gi);
+  // 저장된 잠금 상태를 UI에 반영
+  ['qualifier','semi','final'].forEach(s => applySectionLock(s));
   if(state.champion) setTimeout(()=>showWinner(state.champion),300);
 }
 
